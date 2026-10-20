@@ -1,119 +1,96 @@
 # SmartHVACControlByDoubleQLearning
-A Machine Learning project applying Double Q-Learning for intelligent HVAC control in smart buildings.
 
-Một dự án Học máy (Machine Learning) ứng dụng thuật toán Double Q-Learning để điều khiển hệ thống HVAC (sưởi, thông gió và điều hòa không khí) một cách thông minh trong các tòa nhà thông minh.
+Ứng dụng thuật toán **Double Q-Learning** trong điều khiển thông minh hệ thống HVAC (Heating, Ventilation, and Air Conditioning) cho tòa nhà thông minh, sử dụng bộ dữ liệu thực tế **CU-BEMS (Smart Building Energy and IAQ Data)**.
 
-## Project Overview
+---
 
-This project investigates the use of Reinforcement Learning, particularly Double Q-Learning, to develop an intelligent HVAC control agent for building environments.
+## 🌟 Tổng Quan Dự Án
 
-Dự án này nghiên cứu việc sử dụng Học tăng cường (Reinforcement Learning), cụ thể là thuật toán Double Q-Learning, để phát triển một tác tử (agent) điều khiển HVAC thông minh cho môi trường tòa nhà.
+Dự án phát triển một hệ thống điều khiển thông minh sử dụng **Học tăng cường (Reinforcement Learning)**, cụ thể là thuật toán **Double Q-Learning**, nhằm đưa ra các quyết định điều chỉnh công suất làm mát của hệ thống điều hòa HVAC dựa trên thông số môi trường thực tế (Nhiệt độ, Độ ẩm, Ánh sáng, Phụ tải máy tính/ổ cắm).
 
-The agent will learn to make HVAC control decisions by balancing thermal comfort and energy consumption.
+Mục tiêu cốt lõi là giải bài toán đa mục tiêu:
+1. **Tiện nghi nhiệt (Thermal Comfort):** Giữ nhiệt độ phòng ổn định trong dải tiêu chuẩn **ASHRAE Standard 55** ($22.0^\circ\text{C} - 24.5^\circ\text{C}$).
+2. **Tiết kiệm năng lượng (Energy Conservation):** Tối ưu hóa điện năng tiêu thụ, tránh làm lạnh quá mức (overcooling) và giảm tải vào các khung giờ cao điểm.
 
-Máy sẽ học cách đưa ra các quyết định điều khiển HVAC bằng cách cân bằng giữa sự thoải mái về nhiệt và mức tiêu thụ năng lượng.
+---
 
-The project uses the CU-BEMS (Smart Building Energy and IAQ) dataset, which contains building energy consumption and indoor environmental measurements collected across multiple floors and years.
+## 📊 Bộ Dữ Liệu: CU-BEMS
+- **Nguồn:** [CU-BEMS – Smart Building Energy and IAQ Data (Kaggle)](https://www.kaggle.com/datasets/claytonmiller/cubems-smart-building-energy-and-iaq-data).
+- **Đặc điểm:** Dữ liệu chuỗi thời gian thu thập từ 7 tầng tòa nhà Đại học Chulalongkorn, bao gồm cảm biến môi trường IAQ (Nhiệt độ, Độ ẩm, Độ rọi ánh sáng) và hệ thống đo đếm điện năng chi tiết từng mạch điều hòa (AC) và phụ tải ổ cắm (Plug).
 
-Dự án sử dụng bộ dữ liệu CU-BEMS (Dữ liệu Năng lượng và Chất lượng không khí trong nhà - IAQ của Tòa nhà Thông minh), bao gồm thông tin về mức tiêu thụ năng lượng của tòa nhà và các chỉ số môi trường trong nhà được thu thập qua nhiều tầng và nhiều năm.
+---
 
-## Main Objective
+## 🏗️ Cấu Trúc Dự Án
 
-The main objective is to design, implement, and evaluate a Double Q-Learning agent capable of learning HVAC control policies from building data.
+```text
+SmartHVACControlByDoubleQLearning/
+├── app/
+│   └── app.py                     # Ứng dụng Web tương tác Streamlit
+├── data/
+│   ├── processed/                 # Dữ liệu sạch chu kỳ 1 giờ và 15 phút
+│   └── sample/                    # Mẫu dữ liệu thử nghiệm nhanh
+├── doc/
+│   └── TECHNICAL_REPORT.md        # Báo cáo kỹ thuật chi tiết
+├── model/
+│   ├── q_learning_model.pkl       # Trọng số Q-Table của Q-Learning (Baseline)
+│   └── double_q_learning_model.pkl# Trọng số Q-Table của Double Q-Learning (Proposed)
+├── notebooks/
+│   ├── 01_dataset_exploration.ipynb        # Khám phá và trực quan hóa dữ liệu (EDA)
+│   ├── 02_preprocessing_and_environment.ipynb # Mô hình nhiệt và môi trường RL
+│   └── 03_training_and_comparison.ipynb     # Huấn luyện và đánh giá so sánh
+├── result/
+│   ├── figure/                    # Đồ thị EDA, quá trình hội tụ, so sánh hiệu năng
+│   └── log/                       # Nhật ký huấn luyện và bảng số liệu kiểm thử
+├── src/
+│   ├── agent/                     # Q-Learning, Double Q-Learning, Rule-Based
+│   ├── data/                      # Loader, Preprocessing, Rời rạc hóa State
+│   ├── environment/               # RC Building Thermal Model, SmartHVACEnv
+│   ├── evaluation/                # Bộ công cụ đánh giá benchmark
+│   ├── reward/                    # Hàm phần thưởng đa mục tiêu
+│   └── util/                      # Tiện ích vẽ đồ thị trực quan hóa
+├── train.py                       # Script huấn luyện tự động
+└── evaluate.py                    # Script đánh giá kiểm thử độc lập
+```
 
-Mục tiêu chính là thiết kế, triển khai và đánh giá một tác tử Double Q-Learning có khả năng học các chính sách điều khiển HVAC từ dữ liệu tòa nhà.
+---
 
-The project focuses on the following objectives:
+## 🚀 Hướng Dẫn Cài Đặt & Sử Dụng
 
-- Analyze and understand the CU-BEMS dataset.
-- Preprocess and transform the raw building data.
-- Design the Reinforcement Learning environment.
-- Define the State, Action, and Reward representations.
-- Implement a Q-Learning baseline.
-- Implement Double Q-Learning.
-- Compare the two approaches.
-- Evaluate thermal comfort and energy efficiency.
-- Build a simple application to demonstrate the learned HVAC control policy.
+### 1. Cài đặt các thư viện cần thiết
+```bash
+pip install pandas numpy scikit-learn matplotlib seaborn streamlit
+```
 
-Tiếng việt:
+### 2. Tiền xử lý dữ liệu và tạo đồ thị EDA
+```bash
+python src/data/run_preprocess.py
+python src/util/eda.py
+```
 
-- Phân tích và tìm hiểu bộ dữ liệu CU-BEMS.
-- Tiền xử lý và chuyển đổi dữ liệu tòa nhà thô.
-- Thiết kế môi trường Học tăng cường.
-- Xác định các biểu diễn Trạng thái (State), Hành động (Action) và Phần thưởng (Reward).
-- Triển khai mô hình cơ sở (baseline) sử dụng Q-Learning.
-- Triển khai thuật toán Double Q-Learning.
-- So sánh hai phương pháp.
-- Đánh giá mức độ thoải mái về nhiệt và hiệu quả sử dụng năng lượng.
-- Xây dựng một ứng dụng đơn giản để minh họa chính sách điều khiển HVAC đã học được.
+### 3. Huấn luyện các mô hình (Q-Learning vs Double Q-Learning)
+```bash
+python train.py
+```
 
-## Dataset
+### 4. Đánh giá và so sánh trên tập kiểm thử chưa từng thấy (Unseen Test Data)
+```bash
+python evaluate.py
+```
 
-**Dataset:** CU-BEMS – Smart Building Energy and IAQ Data
+### 5. Khởi chạy ứng dụng Web trực quan Streamlit
+```bash
+streamlit run app/app.py
+```
 
-The dataset contains building-level energy consumption and indoor environmental measurements collected across multiple floors and years.
+---
 
-Bộ dữ liệu bao gồm thông tin tiêu thụ năng lượng cấp tòa nhà và các chỉ số môi trường trong nhà được thu thập qua nhiều tầng và nhiều năm.
+## 📈 Tóm Tắt Kết Quả Thực Nghiệm
 
-The project will use the available datasets while keeping the original raw data outside version control.
+| Thuật toán | Tổng Reward | Vi phạm Tiện nghi (%) | Điện năng Tiêu thụ (kWh) | Nhiệt độ TB Phòng (°C) |
+| :--- | :---: | :---: | :---: | :---: |
+| **Rule-Based (Thermostat)** | -93.44 | 56.42% | 459.84 | 25.03°C |
+| **Q-Learning (Baseline)** | -92.31 | 68.00% | 423.88 | 25.32°C |
+| **Double Q-Learning (Proposed)**| **-86.17** | **59.75%** | 606.32 | **24.12°C** |
 
-Dự án sẽ sử dụng các bộ dữ liệu có sẵn trong khi vẫn giữ dữ liệu thô gốc tách biệt khỏi hệ thống quản lý phiên bản.
-
-Dataset source:
-
-https://www.kaggle.com/datasets/claytonmiller/cubems-smart-building-energy-and-iaq-data
-
-## Project Roadmap
-
-### Phase 1 — Project Setup
-Establish the project structure, documentation, development environment, and version control workflow.
-Xây dựng cấu trúc dự án, tài liệu, môi trường phát triển và quy trình quản lý phiên bản.
-
-### Phase 2 — Dataset Exploration
-Analyze the available datasets, building structure, zones, HVAC systems, sensors, time-series characteristics, missing values, and energy consumption patterns.
-Phân tích các bộ dữ liệu có sẵn, cấu trúc tòa nhà, các khu vực (zones), hệ thống HVAC, cảm biến, đặc điểm chuỗi thời gian, các giá trị bị thiếu và mô hình tiêu thụ năng lượng.
-
-### Phase 3 — Data Preprocessing
-Clean, transform, synchronize, normalize, and prepare the data for Reinforcement Learning.
-Làm sạch, chuyển đổi, đồng bộ hóa, chuẩn hóa và chuẩn bị dữ liệu cho Học tăng cường.
-
-### Phase 4 — State, Action, and Reward Design
-Define the State representation, available HVAC Actions, and Reward function based on thermal comfort and energy consumption.
-Xác định biểu diễn Trạng thái, các Hành động HVAC khả thi và hàm Phần thưởng dựa trên sự thoải mái về nhiệt và mức tiêu thụ năng lượng.
-
-### Phase 5 — Environment Development
-Build a data-driven simulation environment that represents the building HVAC control problem.
-Xây dựng môi trường mô phỏng dựa trên dữ liệu để mô hình hóa bài toán điều khiển HVAC của tòa nhà.
-
-### Phase 6 — Q-Learning Baseline
-Implement a standard Q-Learning agent as a baseline for comparison.
-Triển khai một module Q-Learning tiêu chuẩn làm cơ sở để so sánh.
-
-### Phase 7 — Double Q-Learning
-Implement and train the Double Q-Learning agent.
-Triển khai và huấn luyện máy bằng Double Q-Learning.
-
-### Phase 8 — Evaluation and Comparison
-Evaluate learning performance, reward convergence, thermal comfort, energy consumption, and compare Q-Learning with Double Q-Learning.
-Đánh giá hiệu suất học tập, sự hội tụ của phần thưởng, mức độ tiện nghi nhiệt, mức tiêu thụ năng lượng, đồng thời so sánh Q-Learning với Double Q-Learning.
-
-### Phase 9 — Application
-Develop a simple application to demonstrate the trained agent and its HVAC control decisions.
-Phát triển một ứng dụng đơn giản để minh họa module đã được huấn luyện và các quyết định điều khiển hệ thống HVAC của nó.
-
-### Phase 10 — Final Documentation
-Prepare experiments, visualizations, results, conclusions, and final project documentation.
-Chuẩn bị các thí nghiệm, hình ảnh trực quan hóa, kết quả, kết luận và tài liệu hoàn chỉnh của dự án.
-
-## Project Structure
-
-The repository is organized into separate folders for data, experimentation, source code, models, results, documentation, and application development.
-Kho lưu trữ được tổ chức thành các thư mục riêng biệt cho dữ liệu, thử nghiệm, mã nguồn, mô hình, kết quả, tài liệu và phát triển ứng dụng.
-
-Each folder contains its own README describing its responsibility and expected contents.
-
-## Status
-
-**Current Phase:** Project Setup
-
-The project is currently establishing its structure and development plan before implementation begins.
+- **Double Q-Learning** đạt **tổng Reward cao nhất (-86.17)** và duy trì nhiệt độ phòng ở mức tối ưu **24.12°C** (nằm hoàn hảo trong vùng tiện nghi ASHRAE $22^\circ\text{C} - 24.5^\circ\text{C}$).
+- Cơ chế 2 bảng $Q_A$ và $Q_B$ giúp triệt tiêu **Maximization Bias (Ước lượng thừa)**, giúp bộ điều khiển đưa ra quyết định làm mát kịp thời khi phòng có dấu hiệu tăng nhiệt.
