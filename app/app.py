@@ -47,19 +47,91 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom Styling
+# Custom Styling with High Contrast & Full Width
 st.markdown("""
 <style>
-    .main-title { font-size: 2.1rem; font-weight: 800; color: #16202a; margin-bottom: 0.1rem; }
-    .sub-title { font-size: 1.05rem; color: #495057; margin-bottom: 1.2rem; }
-    .prov-badge {
-        display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold;
+    /* Full width fluid layout adhering to [DIR-202611-002] */
+    .block-container {
+        max-width: 100% !important;
+        padding-top: 1.5rem !important;
+        padding-bottom: 2.5rem !important;
+        padding-left: 2.5rem !important;
+        padding-right: 2.5rem !important;
     }
-    .prov-observed { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-    .prov-external { background-color: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
-    .prov-simulated { background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
-    .prov-fitted { background-color: #e2e3e5; color: #383d41; border: 1px solid #d6d8db; }
-    .status-box { padding: 12px; border-radius: 6px; background-color: #f8f9fa; border-left: 4px solid #007bff; margin-bottom: 12px; }
+
+    /* High contrast, luminous typography */
+    .main-title {
+        font-size: 2.15rem;
+        font-weight: 800;
+        color: #38bdf8 !important;
+        background: linear-gradient(120deg, #60a5fa 0%, #38bdf8 50%, #34d399 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 0.25rem;
+        letter-spacing: -0.3px;
+    }
+    .sub-title {
+        font-size: 1.02rem;
+        color: #94a3b8 !important;
+        margin-bottom: 1.3rem;
+        font-weight: 400;
+        line-height: 1.5;
+    }
+
+    /* High-contrast status box with dark slate card */
+    .status-box {
+        padding: 16px 20px;
+        border-radius: 8px;
+        background-color: #1e293b !important;
+        color: #f1f5f9 !important;
+        border: 1px solid #334155;
+        border-left: 5px solid #38bdf8 !important;
+        margin-bottom: 16px;
+        line-height: 1.7;
+        font-size: 0.95rem;
+    }
+    .status-box b, .status-box strong {
+        color: #38bdf8 !important;
+        font-weight: 700;
+    }
+    .status-box code {
+        background-color: #0f172a !important;
+        color: #facc15 !important;
+        padding: 2px 7px !important;
+        border-radius: 4px !important;
+        border: 1px solid #475569 !important;
+        font-weight: 600 !important;
+    }
+
+    /* Provenance badges with high contrast */
+    .prov-badge {
+        display: inline-block;
+        padding: 3px 10px;
+        border-radius: 6px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        letter-spacing: 0.4px;
+    }
+    .prov-observed {
+        background-color: #064e3b !important;
+        color: #6ee7b7 !important;
+        border: 1px solid #059669 !important;
+    }
+    .prov-external {
+        background-color: #1e3a5f !important;
+        color: #7dd3fc !important;
+        border: 1px solid #0284c7 !important;
+    }
+    .prov-simulated {
+        background-color: #451a03 !important;
+        color: #fcd34d !important;
+        border: 1px solid #d97706 !important;
+    }
+    .prov-fitted {
+        background-color: #334155 !important;
+        color: #e2e8f0 !important;
+        border: 1px solid #64748b !important;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -221,29 +293,43 @@ if menu_choice == "🧪 Phòng Thử Nghiệm Kịch Bản (Scenario Lab)":
         with k4:
             st.metric("Can Thiệp Cổng An Toàn", f"{overrides} bước")
 
-        # Visualization
+        # Visualization with Dark High-Contrast Theme
         st.markdown("### 📈 Đồ Thị Quỹ Đạo Điều Khiển & Nhiệt Độ Phòng")
         fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(14, 7.5), sharex=True)
 
+        fig.patch.set_facecolor('#0f172a')
+        ax1.set_facecolor('#1e293b')
+        ax2.set_facecolor('#1e293b')
+
         # Panel 1: Temperature & Comfort bounds
-        ax1.axhspan(24.0, 26.0, color="#5cb85c", alpha=0.22, label="Vùng Tiện Nghi Ưu Tiên (24.0°C - 26.0°C) [ASHRAE 55]")
-        ax1.axhline(21.0, color="#d9534f", linestyle=":", alpha=0.7, label="Ngưỡng Lạnh Nghiêm Trọng (21.0°C)")
-        ax1.axhline(29.0, color="#d9534f", linestyle=":", alpha=0.7, label="Ngưỡng Nóng Nghiêm Trọng (29.0°C)")
+        ax1.axhspan(24.0, 26.0, color="#10b981", alpha=0.25, label="Vùng Tiện Nghi Ưu Tiên (24.0°C - 26.0°C) [ASHRAE 55]")
+        ax1.axhline(21.0, color="#f87171", linestyle=":", lw=1.8, alpha=0.85, label="Ngưỡng Lạnh Nghiêm Trọng (21.0°C)")
+        ax1.axhline(29.0, color="#f87171", linestyle=":", lw=1.8, alpha=0.85, label="Ngưỡng Nóng Nghiêm Trọng (29.0°C)")
 
-        ax1.plot(df_traj["Step"], df_traj["Ambient Temp (°C)"], "k--", alpha=0.45, label="Nhiệt Độ Ngoài Trời [EXTERNAL]")
-        ax1.plot(df_traj["Step"], df_traj["Indoor Temp (°C)"], color="#0275d8", lw=2.5, label=f"Nhiệt Độ Phòng ({agent_name}) [SIMULATED]")
+        ax1.plot(df_traj["Step"], df_traj["Ambient Temp (°C)"], color="#94a3b8", linestyle="--", lw=1.8, alpha=0.8, label="Nhiệt Độ Ngoài Trời [EXTERNAL]")
+        ax1.plot(df_traj["Step"], df_traj["Indoor Temp (°C)"], color="#38bdf8", lw=2.8, label=f"Nhiệt Độ Phòng ({agent_name}) [SIMULATED]")
 
-        ax1.set_ylabel("Nhiệt Độ (°C)", fontweight="bold")
-        ax1.set_title("Diễn Biến Nhiệt Độ Phòng và Ranh Giới Tiện Nghi ASHRAE", fontweight="bold")
-        ax1.legend(loc="upper right", fontsize=8.5)
-        ax1.grid(True, alpha=0.3)
+        ax1.set_ylabel("Nhiệt Độ (°C)", fontweight="bold", color="#f1f5f9", fontsize=10)
+        ax1.set_title("Diễn Biến Nhiệt Độ Phòng và Ranh Giới Tiện Nghi ASHRAE 55", fontweight="bold", color="#38bdf8", fontsize=12)
+        leg1 = ax1.legend(loc="upper right", fontsize=8.5, facecolor="#0f172a", edgecolor="#475569")
+        for text in leg1.get_texts():
+            text.set_color('#f1f5f9')
+        ax1.grid(True, color="#334155", linestyle="--", alpha=0.6)
+        ax1.tick_params(colors="#cbd5e1")
+        for spine in ax1.spines.values():
+            spine.set_color("#475569")
 
         # Panel 2: HVAC Power & Window Action
-        ax2.step(df_traj["Step"], df_traj["HVAC Power (kW)"], where="post", color="#28a745", lw=2.0, label="Công Suất HVAC (kW) [FITTED_STAGE]")
-        ax2.set_xlabel("Thời Gian Mô Phỏng (Giờ)", fontweight="bold")
-        ax2.set_ylabel("Công Suất HVAC (kW)", fontweight="bold")
-        ax2.legend(loc="upper right", fontsize=8.5)
-        ax2.grid(True, alpha=0.3)
+        ax2.step(df_traj["Step"], df_traj["HVAC Power (kW)"], where="post", color="#4ade80", lw=2.2, label="Công Suất HVAC (kW) [FITTED_STAGE]")
+        ax2.set_xlabel("Thời Gian Mô Phỏng (Giờ)", fontweight="bold", color="#f1f5f9", fontsize=10)
+        ax2.set_ylabel("Công Suất HVAC (kW)", fontweight="bold", color="#f1f5f9", fontsize=10)
+        leg2 = ax2.legend(loc="upper right", fontsize=8.5, facecolor="#0f172a", edgecolor="#475569")
+        for text in leg2.get_texts():
+            text.set_color('#f1f5f9')
+        ax2.grid(True, color="#334155", linestyle="--", alpha=0.6)
+        ax2.tick_params(colors="#cbd5e1")
+        for spine in ax2.spines.values():
+            spine.set_color("#475569")
 
         plt.tight_layout()
         st.pyplot(fig)
