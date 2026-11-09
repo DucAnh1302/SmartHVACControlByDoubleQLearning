@@ -108,3 +108,51 @@ tests/test_q_learning_reproducibility.py::test_q_learning_different_seeds_diverg
 tests/test_q_learning_reproducibility.py::test_q_learning_independent_from_global_np_random PASSED
 ====================== 43 passed, 300 warnings in 2.95s =======================
 ```
+
+---
+
+## 4. BẢNG ĐIỂM CHUẨN THỐNG KÊ 10 HẠT GIỐNG CHÍNH XÁC (DQL vs SINGLE Q-LEARNING)
+
+Nguồn dữ liệu chuẩn: 
+esult/final_validation/dql_vs_ql_10seeds.csv và 
+esult/final_validation/dql_vs_ql_statistical_analysis.json.
+
+| Chỉ Số Đánh Giá | Target Double Q-Learning (10 Seeds) | Single Q-Learning Baseline (10 Seeds) | Hiệu Số Ghép Cặp (DQL - QL) | Kiểm Định & Kết Luận Khoa Học |
+| :--- | :---: | :---: | :---: | :--- |
+| **Reward Trung Bình (Mean)** | **$-37.550 \pm 7.835$** | $-42.777 \pm 15.551$ | **$+5.227 \pm 14.456$** | Paired t-test:  = 1.1442, p = 0.2820$; Wilcoxon:  = 16.0, p = 0.2754$ |
+| **Khoảng Tin Cậy 95% (Reward)** | [-42.404, -32.696] | [-52.413, -33.141] | **[-5.106, 15.560]** | KTC 95% chứa 0; **chưa có khác biệt mang ý nghĩa thống kê ở mức 0.05**. |
+| **Điện Năng Tiêu Thụ (kWh/ngày)** | **.385 	ext{ kWh/ngày}$** | **.136 	ext{ kWh/ngày}$** | **$+2.249 	ext{ kWh/ngày}$** | DQL tiêu thụ cao hơn QL .249 	ext{ kWh/ngày}$. **Không tuyên bố DQL tiết kiệm điện hơn QL.** |
+| **Độ Lệch Chuẩn (Std Dev)** | **.835$** | .551$ | **$-7.716$ (-49.6%)** | **Giảm phương sai**: DQL có độ lệch chuẩn thấp hơn gần một nửa, ổn định hơn rõ rệt. |
+| **Ước Lượng Giá Trị Max-Q** | **$-0.640$** | $-0.794$ | **$+0.154$** | So sánh mô tả giá trị Max-Q học được. Do không có ^*$ chân lý, đây không phải đo bias trực tiếp. |
+
+### Kết luận bắt buộc:
+1. **Chưa có khác biệt Reward có ý nghĩa thống kê ở mức 0.05**.
+2. **DQL có Reward trung bình tốt hơn trong mẫu 10 seeds (+5.227), nhưng chưa đủ bằng chứng kết luận vượt trội**.
+3. **DQL tiêu thụ điện trung bình cao hơn QL khoảng 2.249 kWh/ngày trong benchmark này**.
+4. **Không tuyên bố DQL tiết kiệm điện hơn QL**.
+
+---
+
+## 5. RANH GIỚI KHOA HỌC & CÁC ĐIỂM CHƯA THỂ CHỨNG MINH (UNPROVED LIMITATIONS)
+
+1. **CHƯA chứng minh khả năng tiết kiệm điện .40\%$ trên phần cứng tòa nhà thực tế**: Con số .40\%$ là kết quả mô phỏng ban đầu 5 hạt giống đối chứng với kịch bản chạy cố định 25°C trong mô phỏng số, không phải kết quả trên thiết bị cơ điện thực tế và không phải so sánh với Q-Learning.
+2. **CHƯA chứng minh Double Q-Learning vượt trội áp đảo Single Q-Learning ở mức ý nghĩa thống kê  < 0.05$ về điểm thưởng trung bình**: Paired t-test  = 0.282 > 0.05$. Ưu thế thực tế của DQL là giảm phương sai dao động giữa các hạt giống độc lập (std 7.835 vs 15.551).
+3. **CHƯA đo đạc trực tiếp trạng thái đóng/mở cửa sổ thực tế**: Bộ dữ liệu CU-BEMS không có cảm biến cửa sổ. Các tham số {win}, h_{win}$ được gắn nhãn chuẩn xác NOT_IDENTIFIABLE_FROM_AVAILABLE_DATA.
+4. **CHƯA đo đạc trạm thời tiết ngoài trời tại chỗ**: Chuỗi thời tiết ngoài trời được suy diễn từ mô hình vi khí hậu Bangkok (SIMULATED_ASSUMED).
+5. **CHƯA định danh hoàn toàn tham số nhiệt nội bộ {int}$**: {int} = 0.0100$ chạm biên dưới và KTC 95% [-0.0151, 0.0351] chứa giá trị không dương (FITTED_AT_BOUNDARY_AND_CI_INCLUDES_NON_POSITIVE). Các tham số {env}, h_{ac}$ là ước lượng điểm OLS chưa có SE/CI giải tích, và $ là xấp xỉ tuyến tính thực nghiệm (EMPIRICAL_PSYCHROMETRIC_APPROXIMATION).
+6. **Mức độ sẵn sàng triển khai dừng lại nghiêm ngặt ở RESEARCH_SIMULATION_ONLY**: MockBMSControllerHIL và ShadowModeRunner là các stub phần mềm mô phỏng, chưa kết nối phần cứng thực tế và chưa chạy Shadow Mode trên tòa nhà thật.
+
+---
+
+## 6. DANH SÁCH TOÀN BỘ TÀI LIỆU ĐÃ ĐỒNG BỘ (SYNCHRONIZATION CHECKLIST)
+
+- [x] README.md: Đồng bộ kết quả 10 seeds, tách biệt legacy 5-seed benchmark, sửa overestimation, cập nhật 43 tests, định vị RESEARCH_SIMULATION_ONLY.
+- [x] TRAINING_AND_EVALUATION.md: Bổ sung Section 7 điểm chuẩn 10 seeds, sửa overestimation thành so sánh mô tả action-value, gắn nhãn legacy 5 seeds.
+- [x] BAO_CAO_TONG_KET_DO_AN.md: Cập nhật Chương 7 (identifiability), Chương 9 (overestimation lý thuyết), Chương 12 (10 seeds benchmark), Chương 14 (legacy simulation note), Chương 18 (43/43 tests), Chương 19 (deployment tier), Chương 20 & 21 (bỏ tuyên bố 5 giây, đồng bộ giới hạn khoa học).
+- [x] FINAL_VALIDATION_STATUS.md: Đồng bộ 43/43 tests, bảng thống kê 10 seeds, ranh giới chưa chứng minh, checklist tài liệu.
+- [x] GENERALIZATION_BENCHMARK.md: Làm rõ chế độ Calibration-Only không cần huấn luyện lại chính sách (0 retraining episodes).
+- [x] PHYSICAL_MODEL_VALIDATION.md: Đồng bộ bảng 8 tham số định danh với 7 nhãn chuẩn từ JSON.
+- [x] REAL_WORLD_READINESS.md: Khóa chứng chỉ nghiêm ngặt ở RESEARCH_SIMULATION_ONLY, làm rõ HIL/Shadow là software mock stubs.
+- [x] IMPLEMENTATION_STATUS.md: Cập nhật 43/43 tests, nhãn định danh trung thực, kết quả 10 seeds và ranh giới legacy benchmark.
+- [x] TECHNICAL_LIMITATIONS.md: Bổ sung phân tích 10 seeds, làm rõ $ là xấp xỉ tuyến tính, chuẩn hóa bảng giới hạn triển khai RESEARCH_SIMULATION_ONLY.
+- [x] LIMITATIONS_AND_FUTURE_WORK.md: Khẳng định HIL vật lý và Shadow Mode thực địa là lộ trình nghiên cứu tương lai.

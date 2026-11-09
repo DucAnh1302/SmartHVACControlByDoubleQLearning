@@ -223,7 +223,11 @@ Thực nghiệm đo lường độ suy giảm hiệu năng trước 7 kịch b�
 
 ---
 
-## 12. ĐÁNH GIÁ ĐIỂM CHUẨN ĐA HẠT GIỐNG 9 CHIẾN LƯỢC ĐIỀU KHIỂN
+## 12. ĐÁNH GIÁ ĐIỂM CHUẨN BAN ĐẦU (LEGACY BENCHMARK / CẤU HÌNH CŨ - 5 RANDOM SEEDS)
+
+> [!NOTE]
+> Đây là bảng điểm chuẩn thăm dò ban đầu qua 5 hạt giống (
+esult/log/baselines_benchmark.csv). Chỉ số tiết kiệm .40\%$ điện năng được đo lường hoàn toàn trong môi trường mô phỏng số đối chứng với kịch bản chạy cố định 25°C, không phải kết quả trên thiết bị phần cứng tòa nhà thực tế và không phải so sánh với Q-Learning.
 
 Thực nghiệm đo lường 9 chiến lược điều khiển trên tập kiểm định 2018 chưa từng thấy qua **5 hạt giống ngẫu nhiên độc lập (`42, 101, 202, 303, 404`)**:
 
@@ -238,6 +242,28 @@ Thực nghiệm đo lường 9 chiến lược điều khiển trên tập kiể
 | **Legacy DQL (45s Cũ)** | 5 | -46.18 | 3.90 | `[-49.60, -42.77]` | 64.06% | 0.00% | 13.13 | 461.12 | -30.89% | 25.20 | 5.1 | 1.05% |
 | **AC-Always-Off Baseline** | 5 | -38.78 | 9.18 | `[-46.83, -30.73]` | 71.89% | 11.83% | 29.43 | 55.64 | +84.21% | 26.81 | 1.7 | 11.72% |
 | **Random Policy** | 5 | -89.42 | 7.95 | `[-96.38, -82.45]` | 64.50% | 14.39% | 28.03 | 320.05 | +9.15% | 26.57 | 12.6 | 34.72% |
+
+---
+
+
+### 12.2 Điểm Chuẩn Kiểm Định Thống Kê Học Thuật Mới Nhất (LATEST 10-SEED CONSISTENCY BENCHMARK)
+
+Để đảm bảo tính tái lập 100%, loại bỏ hoàn toàn trôi ngẫu nhiên giữa các thuật toán, pipeline kiểm định học thuật ghép cặp 10 hạt giống ngẫu nhiên độc lập (42, 101, 202, 303, 404, 505, 606, 707, 808, 909) với RNG độc lập cho cả hai agent đã được thực thi (
+esult/final_validation/dql_vs_ql_10seeds.csv, 
+esult/final_validation/dql_vs_ql_statistical_analysis.json):
+
+| Chỉ Số Đánh Giá | Target Double Q-Learning (10 Seeds) | Single Q-Learning Baseline (10 Seeds) | Hiệu Số Ghép Cặp (DQL - QL) | Kiểm Định Thống Kê & Kết Luận |
+| :--- | :---: | :---: | :---: | :--- |
+| **Reward Trung Bình (Mean)** | **$-37.550 \pm 7.835$** | $-42.777 \pm 15.551$ | **$+5.227 \pm 14.456$** | Paired t-test:  = 1.1442, p = 0.2820$; Wilcoxon:  = 16.0, p = 0.2754$ |
+| **Khoảng Tin Cậy 95% (Reward)** | [-42.404, -32.696] | [-52.413, -33.141] | **[-5.106, 15.560]** | KTC 95% của hiệu số bao hàm 0; **chưa có khác biệt mang ý nghĩa thống kê ở mức 0.05**. |
+| **Điện Năng Tiêu Thụ (kWh/ngày)** | **.385 	ext{ kWh/ngày}$** | **.136 	ext{ kWh/ngày}$** | **$+2.249 	ext{ kWh/ngày}$** | DQL tiêu thụ cao hơn QL .249 	ext{ kWh/ngày}$. **Không tuyên bố DQL tiết kiệm điện hơn QL.** |
+| **Độ Lệch Chuẩn Reward (Std)** | **.835$** | .551$ | **$-7.716$ (-49.6%)** | **Giảm phương sai**: DQL có độ lệch chuẩn thấp hơn gần một nửa, ổn định hơn rõ rệt. |
+| **Ước Lượng Giá Trị Max-Q** | **$-0.640$** | $-0.794$ | **$+0.154$** | So sánh mô tả giá trị Max-Q học được. Do không có ^*$ chân lý, đây không phải đo bias trực tiếp. |
+
+#### Kết luận khoa học chuẩn mực từ điểm chuẩn 10 seeds:
+1. **Chưa có khác biệt Reward có ý nghĩa thống kê ở mức 0.05**: Dù DQL đạt Reward trung bình tốt hơn trong mẫu 10 seeds (+5.227), các kiểm định thống kê  = 0.282$ và  = 0.2754$ cho thấy chưa đủ bằng chứng kết luận DQL vượt trội Single Q-Learning trên tác vụ rời rạc 600 trạng thái này.
+2. **DQL tiêu thụ điện trung bình cao hơn QL khoảng 2.249 kWh/ngày**: Tuyệt đối không tuyên bố DQL tiết kiệm điện hơn QL.
+3. **Ưu thế thực tế rõ rệt nhất của DQL là Giảm phương sai (Variance Reduction)**: DQL giảm độ lệch chuẩn giữa các hạt giống từ .551$ xuống .835$ (giảm ~50%), giúp quá trình hội tụ không bị nhạy cảm trước hạt giống khởi tạo.
 
 ---
 
@@ -344,7 +370,7 @@ Hệ thống định vị minh bạch năng lực theo khung 5 bậc:
 ### 20.1 Đóng góp học thuật cốt lõi
 1. **Minh chứng tính ưu việt của mô hình vật lý Hộp xám**: Chứng minh bằng số liệu thực nghiệm rằng mô hình vật lý bảo toàn năng lượng có khả năng tổng quát hóa ngoại miền vượt trội (giảm 57.7% sai số so với Random Forest) và không bao giờ đưa ra các hành vi phản vật lý.
 2. **Hiệu quả tiết kiệm năng lượng 42.40%**: Thuật toán Target Double Q-Learning giúp giảm **$42.40\%$ điện năng** so với chiến lược cố định 25°C và giảm **$53.8\%$** so với bộ điều khiển Thermostat thông thường, trong khi kiểm soát vi phạm tiện nghi nghiêm trọng ở mức chỉ $2.44\%$.
-3. **Quy trình chuyển giao 3 bước chi phí thấp**: Chứng minh rằng chỉ cần **5 giây hiệu chuẩn công suất thiết bị (Calibration-Only)** hoặc **10 - 25 tập học thích nghi cục bộ (Fine-Tuning)**, Agent có thể phục hồi hiệu năng tối ưu trên các tầng và phòng hoàn toàn mới mà không cần thu thập dữ liệu khổng lồ.
+3. **Quy trình chuyển giao 3 bước chi phí thấp**: Chứng minh rằng chỉ cần **hiệu chuẩn công suất thiết bị (Calibration-Only, không cần huấn luyện lại chính sách)** hoặc **10 - 25 tập học thích nghi cục bộ (Fine-Tuning)**, Agent có thể phục hồi hiệu năng tối ưu trên các tầng và phòng hoàn toàn mới mà không cần thu thập dữ liệu khổng lồ.
 4. **Tiêu chuẩn an toàn triển khai**: Thiết lập kiến trúc Cổng an toàn xác định (Safety Gateway) và giao thức HIL/Shadow Mode bảo đảm thiết bị cơ điện không bao giờ bị tổn hại.
 
 ### 20.2 Hướng phát triển trong tương lai
@@ -370,7 +396,7 @@ Hệ thống định vị minh bạch năng lực theo khung 5 bậc:
 
 3. **Cơ chế chuyển giao chi phí thấp (Calibration-Only & Fine-Tuning Transferability)**:
    - *Bằng chứng*: Kiểm nghiệm trên 4 trục chuyển dịch miền dữ liệu (thời gian, năm, phòng, tầng) theo cơ chế phân vùng 3 pha chống rò rỉ (20% Calib, 40% Adapt, 40% Test).
-   - *Kết quả*: Chuyển giao Zero-Shot bị sụt giảm nghiêm trọng do trôi đặc tính thiết bị. Chỉ cần 5 giây chạy K-Means tái hiệu chuẩn công suất thiết bị (0 episode huấn luyện lại), hiệu năng phục hồi từ $48\%$ đến $60\%$. Thích nghi cục bộ (Fine-tuning) với ngân sách nhỏ (10-25 episodes) đưa vi phạm nghiêm trọng về dưới $2.3\%$.
+   - *Kết quả*: Chuyển giao Zero-Shot bị sụt giảm nghiêm trọng do trôi đặc tính thiết bị. Chỉ cần hiệu chuẩn công suất thiết bị qua phân cụm K-Means (Calibration-Only, 0 episode huấn luyện lại), hiệu năng phục hồi từ $48\%$ đến $60\%$. Thích nghi cục bộ (Fine-tuning) với ngân sách nhỏ (10-25 episodes) đưa vi phạm nghiêm trọng về dưới $2.3\%$.
 
 4. **Hiệu quả tiết kiệm năng lượng trong mô phỏng số có kiểm soát**:
    - *Bằng chứng*: Trong môi trường mô phỏng vật lý có hiệu chuẩn thực nghiệm, Agent đạt mức tiêu thụ $202.93\text{ kWh/ngày}$, tiết kiệm **$42.40\%$** điện năng so với chiến lược chạy cố định 25°C ($352.28\text{ kWh/ngày}$) và giảm **$53.8\%$** so với bộ điều khiển Thermostat thông thường.

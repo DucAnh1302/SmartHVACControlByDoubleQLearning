@@ -45,7 +45,10 @@ To evaluate how the policy responds to unexpected building envelope degradation 
 
 ---
 
-## 3. Future Research & Development Roadmap
+## 3. Future Research & Development Roadmap (Current: RESEARCH_SIMULATION_ONLY)
+
+> [!IMPORTANT]
+> The current project is strictly certified at **RESEARCH_SIMULATION_ONLY**. The existing MockBMSControllerHIL and ShadowModeRunner modules are software simulation harnesses designed for packet structure validation and offline testing. No physical connection to university BMS panels or live physical building shadow mode was conducted.
 
 ```mermaid
 flowchart TD

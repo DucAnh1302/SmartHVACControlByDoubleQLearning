@@ -13,10 +13,10 @@ flowchart LR
     Tier4 --> Tier5["Tier 5:<br/>DEPLOYMENT_CANDIDATE"]
 
     style Tier1 fill:#d1e7dd,stroke:#0f5132,stroke-width:2px
-    style Tier2 fill:#d1e7dd,stroke:#0f5132,stroke-width:2px
-    style Tier3 fill:#d1e7dd,stroke:#0f5132,stroke-width:2px
-    style Tier4 fill:#fff3cd,stroke:#664d03,stroke-width:2px
-    style Tier5 fill:#f8d7da,stroke:#842029,stroke-width:2px
+    style Tier2 fill:#e2e8f0,stroke:#475569,stroke-width:1px
+    style Tier3 fill:#f8d7da,stroke:#842029,stroke-width:1px
+    style Tier4 fill:#f8d7da,stroke:#842029,stroke-width:1px
+    style Tier5 fill:#f8d7da,stroke:#842029,stroke-width:1px
 ```
 
 ### Current System Certification Status

@@ -48,7 +48,7 @@
 ### Layer 6: Target Double Q-Learning Agent & Single Q Baseline [100% COMPLETED]
 - [x] `TargetDoubleQLearningAgent` in `src/agent/target_double_q_agent.py` featuring dual independent estimators ($Q_A, Q_B$) of shape $(600, 5) = 3,000$ entries each.
 - [x] Full visit tracking matrix $N(s, a)$ across all 3,000 state-action pairs.
-- [x] Decoupled action selection and value evaluation eliminating maximization bias.
+- [x] Decoupled action selection and value evaluation mitigating maximization bias theoretically. Action-value estimate comparison (learned_action_value_estimate_comparison) is a descriptive metric; no claim of ground-truth bias elimination since ^*$ is unknown.
 - [x] Seeded $\epsilon$-greedy exploration with deterministic tie-breaking.
 - [x] `QLearningAgent` in `src/agent/q_learning_agent.py` trained as direct baseline (800 episodes).
 - [x] Comparative overestimation plot generated in `result/figure/dql_vs_ql_overestimation.png`.

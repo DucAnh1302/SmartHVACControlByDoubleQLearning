@@ -68,7 +68,7 @@ All transfer modes and domain shift axes were evaluated across held-out target t
 
 ---
 
-## 5. Practical Guidelines for Facility Deployment
+## 5. Practical Guidelines for Domain Transfer & Adaptation (RESEARCH_SIMULATION_ONLY)
 1. **Never Deploy Naive Zero-Shot Across Building Alterations**: Equipment stage shifts cause immediate thermal overshoot.
-2. **Calibration-Only is the Minimum Viable Step**: In zero-compute scenarios, 5-second K-Means recalibration prevents up to 60% of severe thermal violations.
+2. **Calibration-Only is the Minimum Viable Step**: In resource-constrained scenarios, K-Means recalibration (Calibration-Only, without policy retraining) prevents up to 60% of severe thermal violations.
 3. **10 to 25 Episodes of Fine-Tuning Recovers Optimal Control**: Rapid policy adaptation requires minimal local interaction.

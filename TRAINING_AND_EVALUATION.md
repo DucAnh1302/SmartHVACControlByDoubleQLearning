@@ -70,7 +70,11 @@ $$R_t = R_{comfort} + R_{severe} + R_{humidity} + R_{energy} + R_{switching} + R
 
 ---
 
-## 5. Comprehensive Multi-Seed Baseline Benchmark (5 Random Seeds)
+## 5. Legacy Baseline Benchmark (OLD CONFIGURATION / 5 RANDOM SEEDS)
+
+> [!NOTE]
+> This is the initial 5-seed exploratory benchmark (
+esult/log/baselines_benchmark.csv). The reported 42.40% simulated energy savings is measured strictly against the fixed 25°C simulation baseline in the simulator, NOT on physical building hardware and NOT as an energy savings claim over Q-Learning.
 
 All 9 candidate controllers were evaluated across **5 independent seeds** (`42, 101, 202, 303, 404`) on the held-out test split of the primary domain (`2018_F2_Z1`), totaling $5 \times 15 = 75$ episodes per policy ($1,800$ simulation hours):
 
@@ -100,3 +104,25 @@ All 9 candidate controllers were evaluated across **5 independent seeds** (`42, 
    - Double Q-Learning provides smoother value convergence without the overestimation spikes evident in the Q-learning trajectory.
 4. **Safety Gateway Action Veto Rate**:
    - The safety gateway intervened on $19.50\%$ of Target DQL actions, preventing potential overcooling excursions below $21.0^\circ\text{C}$ and enforcing the 1-hour compressor short-cycle interlock.
+
+---
+
+## 7. Latest Academic Consistency Benchmark (10 Independent Seeds)
+
+To guarantee scientific rigor, eliminate exploration drift, and ensure exact reproducibility, a 10-seed paired evaluation pipeline was executed using identical matched random seeds (42, 101, 202, 303, 404, 505, 606, 707, 808, 909) with independent 
+umpy.random.Generator instances for both agents (
+esult/final_validation/dql_vs_ql_10seeds.csv, 
+esult/final_validation/dql_vs_ql_statistical_analysis.json):
+
+| Evaluation Metric | Target Double Q-Learning (10 Seeds) | Single Q-Learning Baseline (10 Seeds) | Paired Difference (DQL - QL) | Statistical Test & Significance |
+| :--- | :---: | :---: | :---: | :--- |
+| **Mean Episode Reward** | **$-37.550 \pm 7.835$** | $-42.777 \pm 15.551$ | **$+5.227 \pm 14.456$** | Paired t-test:  = 1.1442, p = 0.2820$ ( > 0.05$); Wilcoxon:  = 16.0, p = 0.2754$ |
+| **Reward 95% Confidence Interval** | [-42.404, -32.696] | [-52.413, -33.141] | **[-5.106, 15.560]** | 95% CI of paired difference spans zero; difference is **not statistically significant**. |
+| **Daily Energy Consumption** | **.385 	ext{ kWh/day}$** | **.136 	ext{ kWh/day}$** | **$+2.249 	ext{ kWh/day}$** | DQL consumed $+2.249 	ext{ kWh/day}$ more energy on average. **No claim of energy superiority over QL.** |
+| **Reward Standard Deviation** | **.835$** | .551$ | **$-7.716$ (-49.6%)** | **Variance Reduction**: DQL standard deviation is nearly 50% lower, proving higher convergence stability. |
+| **Learned Action-Value Estimate** | **$-0.640$** | $-0.794$ | **$+0.154$** | Descriptive comparison of average learned max-Q. Ground truth ^*$ is unknown; not a direct bias measure. |
+
+### Rigorous Scientific Conclusion:
+1. **No Statistically Significant Reward Superiority**: With  = 0.282 > 0.05$, the $+5.227$ reward difference in the 10-seed sample does not constitute statistically significant evidence that DQL outperforms Single Q-Learning on this 600-state discrete task.
+2. **No Energy Savings over Q-Learning**: Target DQL consumed an average of .385 	ext{ kWh/day}$ versus .136 	ext{ kWh/day}$ for Single Q-Learning (+2.249 kWh/day difference). We do not claim DQL saves energy compared to Q-Learning.
+3. **Substantial Variance Reduction**: The primary verified advantage of Double Q-Learning in this discrete environment is stabilizing training trajectories across random initializations (reducing seed standard deviation from .551$ to .835$).

@@ -105,7 +105,11 @@ SmartHVACControlByDoubleQLearning/
 
 ---
 
-## 📈 Kết Quả Thực Nghiệm Đo Lường Đa Hạt Giống (5 Random Seeds)
+## 📈 Kết Quả Điểm Chuẩn Ban Đầu (LEGACY BENCHMARK / CẤU HÌNH CŨ - 5 RANDOM SEEDS)
+
+> [!NOTE]
+> Đây là kết quả thử nghiệm ban đầu qua 5 hạt giống (
+esult/log/baselines_benchmark.csv). Chỉ số tiết kiệm .40\%$ điện năng được đo lường hoàn toàn trong mô phỏng số đối chứng với chiến lược chạy cố định 25°C, không phải kết quả triển khai trên thiết bị tòa nhà thực tế và không phải so sánh với Q-Learning.
 
 ### 1. Bảng Điểm Chuẩn Đối Đầu Các Chiến Lược Điều Khiển
 Thực nghiệm đánh giá trên tập kiểm định độc lập năm 2018 chưa từng thấy qua 5 hạt giống (`42, 101, 202, 303, 404`):
@@ -130,6 +134,30 @@ Thực nghiệm đánh giá trên tập kiểm định độc lập năm 2018 ch
 
 ---
 
+
+---
+
+## 🔬 Kết Quả Kiểm Định Thống Kê Học Thuật Mới Nhất (LATEST 10-SEED CONSISTENCY BENCHMARK)
+
+Để đảm bảo tính trung thực khoa học tuyệt đối và loại bỏ trôi ngẫu nhiên, một pipeline kiểm thử ghép cặp 10 hạt giống ngẫu nhiên độc lập (42, 101, 202, 303, 404, 505, 606, 707, 808, 909) với bộ sinh số ngẫu nhiên RNG độc lập đã được thực thi (
+esult/final_validation/dql_vs_ql_10seeds.csv, 
+esult/final_validation/dql_vs_ql_statistical_analysis.json):
+
+| Chỉ Số Đánh Giá | Target Double Q-Learning (10 Seeds) | Single Q-Learning Baseline (10 Seeds) | Chênh Lệch Ghép Cặp (DQL - QL) | Kiểm Định Thống Kê & Ý Nghĩa |
+| :--- | :---: | :---: | :---: | :--- |
+| **Reward Trung Bình (Mean)** | **$-37.550 \pm 7.835$** | $-42.777 \pm 15.551$ | **$+5.227 \pm 14.456$** | Paired t-test:  = 1.1442, p = 0.2820$ ( > 0.05$); Wilcoxon:  = 16.0, p = 0.2754$ |
+| **Khoảng Tin Cậy 95% (Reward)** | [-42.404, -32.696] | [-52.413, -33.141] | **[-5.106, 15.560]** | KTC 95% của hiệu số chứa giá trị 0; khác biệt **chưa có ý nghĩa thống kê**. |
+| **Điện Năng Tiêu Thụ (kWh/ngày)** | **.385 	ext{ kWh/ngày}$** | **.136 	ext{ kWh/ngày}$** | **$+2.249 	ext{ kWh/ngày}$** | DQL tiêu thụ cao hơn QL .249 	ext{ kWh/ngày}$. **Không tuyên bố DQL tiết kiệm điện hơn QL.** |
+| **Độ Lệch Chuẩn (Standard Deviation)** | **.835$** | .551$ | **$-7.716$ (-49.6%)** | **Giảm phương sai**: DQL có độ lệch chuẩn thấp hơn gần một nửa, chứng minh tính ổn định hội tụ cao hơn. |
+| **Ước Lượng Giá Trị Max-Q** | **$-0.640$** | $-0.794$ | **$+0.154$** | So sánh mô tả giá trị Max-Q học được. Do không có ^*$ chân lý, đây không phải phép đo độ thiên lệch trực tiếp. |
+
+### Kết luận khoa học chuẩn mực:
+- **Chưa có khác biệt Reward có ý nghĩa thống kê ở mức 0.05**: Mặc dù DQL đạt Reward trung bình tốt hơn trong mẫu 10 seeds (+5.227), các kiểm định  = 0.282$ và  = 0.2754$ cho thấy chưa đủ bằng chứng kết luận DQL vượt trội về mặt thống kê.
+- **Không tuyên bố DQL tiết kiệm điện hơn QL**: DQL tiêu thụ trung bình cao hơn QL khoảng 2.249 kWh/ngày trong thực nghiệm này.
+- **Ưu thế cốt lõi của DQL**: Giảm mạnh phương sai dao động giữa các hạt giống ngẫu nhiên (std 7.835 so với 15.551 của Single Q), đem lại khả năng hội tụ ổn định hơn nhiều lần.
+
+---
+
 ## 🚀 Hướng Dẫn Tái Lập Thực Nghiệm (Reproducibility Guide)
 
 ### 1. Cài đặt thư viện phụ thuộc
@@ -137,7 +165,7 @@ Thực nghiệm đánh giá trên tập kiểm định độc lập năm 2018 ch
 pip install numpy pandas scikit-learn scipy matplotlib streamlit pytest
 ```
 
-### 2. Chạy toàn bộ 32 Unit Test tự động (100% Pass)
+### 2. Chạy toàn bộ 43 Unit Test tự động (100% Pass)
 ```bash
 python -m pytest tests/ -v
 ```

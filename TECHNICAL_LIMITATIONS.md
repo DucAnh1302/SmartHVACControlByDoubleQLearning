@@ -49,6 +49,20 @@ $$\frac{dRH}{dt} = h_{env}(RH_{amb} - RH) + h_T \frac{dT}{dt} - h_{ac} P_{hvac} 
 
 ---
 
+
+### 3.3 Grey-Box Parameter Identifiability Summary
+Based on rigorous OLS fitting on 2018_F2_Z1 ( = 1,235$ sequential hours) stored in 
+esult/final_validation/greybox_parameter_identifiability.json:
+- **{env} = 0.0744 	ext{ h}^{-1}$** (SE: 0.0067, 95% CI: [0.0613, 0.0875]): **IDENTIFIED**. Ambient envelope conductance is strictly positive and statistically separated from zero.
+- **{int} = 0.0100 	ext{ ^\circ C/(kW\cdot h)}$** (SE: 0.0128, 95% CI: [-0.0151, 0.0351]): **FITTED_AT_BOUNDARY_AND_CI_INCLUDES_NON_POSITIVE**. Estimated at lower numerical bound (0.0100); unconstrained CI includes non-positive values due to low daytime plug telemetry excitation variance.
+- **{ac} = 0.0130 	ext{ ^\circ C/(kW\cdot h)}$** (SE: 0.0058, 95% CI: [0.0016, 0.0244]): **IDENTIFIED**. Direct HVAC cooling rate is statistically distinct from zero.
+- **{env} = 0.0200 	ext{ h}^{-1}$** (SE: *Unavailable*, CI: *Unavailable*): **FITTED_POINT_ESTIMATE_HIGH_RESIDUAL_VARIANCE**. Stage-2 OLS point estimate; analytical SE unavailable due to absence of enthalpy sensors.
+- ** = -2.3500 	ext{ \%RH/^\circ C}$** (SE: *Unavailable*, CI: *Unavailable*): **EMPIRICAL_PSYCHROMETRIC_APPROXIMATION**.
+- **{ac} = 0.0500 	ext{ \%RH/(kW\cdot h)}$** (SE: *Unavailable*, CI: *Unavailable*): **FITTED_POINT_ESTIMATE**. Stage-2 active dehumidification rate; analytical SE unavailable.
+- **{win} = 0.4500 	ext{ h}^{-1}, h_{win} = 0.5000 	ext{ h}^{-1}$**: **NOT_IDENTIFIABLE_FROM_AVAILABLE_DATA**. CU-BEMS telemetry lacks window state sensors; assumed based on ASHRAE literature.
+
+---
+
 ## 4. Reinforcement Learning & Algorithmic Limitations
 
 ### 4.1 State Discretization & Information Loss
@@ -68,6 +82,19 @@ As revealed by our **Robustness Suite** (`result/log/robustness_benchmark.csv`):
 
 ---
 
+
+### 4.4 DQL vs. Single Q-Learning: 10-Seed Statistical Validation & Overestimation Limits
+In our latest 10-seed paired validation pipeline (
+esult/final_validation/dql_vs_ql_10seeds.csv, 
+esult/final_validation/dql_vs_ql_statistical_analysis.json):
+- **Asymptotic Reward**: Double Q-Learning achieved mean reward **$-37.550 \pm 7.835$**, while Single Q-Learning achieved **$-42.777 \pm 15.551$** (paired difference: $+5.227$, 95% CI: [-5.106, 15.560]).
+- **Statistical Significance**: Paired t-test ( = 1.1442, p = 0.282$) and Wilcoxon signed-rank test ( = 16.0, p = 0.2754$) show **no statistically significant difference at $lpha = 0.05$**. While DQL has a higher sample mean, evidence is insufficient to claim superiority on this discrete tabular task.
+- **Energy Consumption**: DQL consumed **.385 	ext{ kWh/day}$** vs QL **.136 	ext{ kWh/day}$** (+2.249 kWh/day higher for DQL). **No claim is made that DQL saves energy compared to Q-Learning.**
+- **Variance Reduction**: DQL reduced standard deviation across seeds by nearly 50% (.835$ vs .551$), demonstrating higher convergence stability across random initializations.
+- **Overestimation Analysis Limitation**: Single Q-Learning showed higher average learned max-Q estimates ($-0.794$) compared to DQL ($-0.640$). However, learned_action_value_estimate_comparison is strictly a **descriptive metric**, not a direct quantitative measurement of estimation bias, because analytical ground-truth ^*$ is unknown in this complex building simulator. Double Q-Learning decouples action selection and evaluation to mitigate maximization bias theoretically, but cannot be proven to be strictly unbiased in practice.
+
+---
+
 ## 5. Deployment & Actuation Boundaries
 
 | Dimension | Physical Real-World Requirement | Current Simulation Status | Readiness Assessment |
@@ -78,4 +105,4 @@ As revealed by our **Robustness Suite** (`result/log/robustness_benchmark.csv`):
 | **Site Authorization** | Professional Engineer (PE) stamped control sequence | Academic research project | <span style="color:red">**UNAUTHORIZED FOR LIVE ACTUATION**</span> |
 
 > [!CAUTION]
-> **Strict Operational Prohibition**: Any live command dispatch to physical HVAC plant equipment is strictly forbidden until physical BACnet edge gateways, hardware freeze-stat relays, and site engineering sign-offs are in place.
+> **Strict Operational Prohibition**: The current deployment readiness level is strictly **RESEARCH_SIMULATION_ONLY**. The system has NOT been connected to real BMS hardware, has NOT achieved physical Hardware-in-the-Loop validation, and has NOT executed Shadow Mode on a real building. Any live command dispatch to physical HVAC plant equipment is strictly forbidden until physical BACnet edge gateways, hardware freeze-stat relays, and site engineering sign-offs are in place.

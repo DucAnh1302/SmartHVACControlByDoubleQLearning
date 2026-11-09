@@ -64,16 +64,16 @@ $$\frac{dRH}{dt} = h_{env}(RH_{amb} - RH) + h_T \frac{dT}{dt} - h_{ac} P_{hvac} 
 
 Parameters were identified strictly on `df_train` ($N = 1,235$ sequential hourly observations) with regularized ordinary least squares:
 
-| Parameter | Description | Estimated Value | Scientific Identifiability Status |
-| :--- | :--- | :---: | :--- |
-| **$k_{env}$** | Building envelope thermal conductance | **$0.0744 \text{ h}^{-1}$** | **IDENTIFIED** (Passive night/weekend data) |
-| **$k_{int}$** | Internal sensible heat gain gain | **$0.0100 \text{ ^\circ C/(kW\cdot h)}$** | **IDENTIFIED** (Working hour plug/lighting ramp) |
-| **$k_{ac}$** | HVAC cooling extraction efficiency | **$0.0130 \text{ ^\circ C/(kW\cdot h)}$** | **IDENTIFIED** (Compressor active cooling cycles) |
-| **$h_{env}$** | Moisture infiltration rate | **$0.0200 \text{ h}^{-1}$** | **IDENTIFIED_WITH_HIGH_VARIANCE** |
-| **$h_T$** | Psychrometric RH-temperature coupling | **$-2.3500 \text{ \%RH/^\circ C}$** | **THERMODYNAMIC_CONSTANT** (Clausius-Clapeyron) |
-| **$h_{ac}$** | Active dehumidification rate | **$0.0500 \text{ \%RH/(kW\cdot h)}$** | **IDENTIFIED** (Coil condensation cycles) |
-| **$k_{win}$** | Natural ventilation conductance (open window) | **$0.4500 \text{ h}^{-1}$** | **SIMULATED_ASSUMED_NO_DATA** |
-| **$h_{win}$** | Natural ventilation moisture exchange | **$0.5000 \text{ h}^{-1}$** | **SIMULATED_ASSUMED_NO_DATA** |
+| Parameter | Description | Estimated Value | Std Error | 95% Confidence Interval | Scientific Identifiability Status | Scientific Evidence & Notes |
+| :--- | :--- | :---: | :---: | :---: | :--- | :--- |
+| **{env}$** | Building envelope thermal conductance | **.0744 \text{ h}^{-1}$** | 0.0067 | [0.0613, 0.0875] | **IDENTIFIED** | Ambient heat infiltration conductance per building thermal mass. Strictly positive and identified. |
+| **{int}$** | Internal sensible heat gain | **.0100 \text{ ^\circ C/(kW\cdot h)}$** | 0.0128 | [-0.0151, 0.0351] | **FITTED_AT_BOUNDARY_AND_CI_INCLUDES_NON_POSITIVE** | Estimated at lower bound (0.0100) and unconstrained 95% CI includes non-positive values due to low daytime plug telemetry excitation variance. |
+| **{ac}$** | HVAC cooling extraction efficiency | **.0130 \text{ ^\circ C/(kW\cdot h)}$** | 0.0058 | [0.0016, 0.0244] | **IDENTIFIED** | Direct HVAC cooling temperature reduction rate. Statistically distinct from zero. |
+| **{env}$** | Moisture infiltration rate | **.0200 \text{ h}^{-1}$** | *Unavailable* | *Unavailable* | **FITTED_POINT_ESTIMATE_HIGH_RESIDUAL_VARIANCE** | Fitted via stage-2 OLS on latent moisture balance. Analytic standard error unavailable; residual variance is high due to lack of direct latent enthalpy sensors. |
+| **$** | Psychrometric RH-temperature coupling | **$-2.3500 \text{ \%RH/^\circ C}$** | *Unavailable* | *Unavailable* | **EMPIRICAL_PSYCHROMETRIC_APPROXIMATION** | Empirical linear approximation of Clausius-Clapeyron saturation vapor pressure curve around 24-26°C (-2.35 %RH/°C), not a universal thermodynamic constant. |
+| **{ac}$** | Active dehumidification rate | **.0500 \text{ \%RH/(kW\cdot h)}$** | *Unavailable* | *Unavailable* | **FITTED_POINT_ESTIMATE** | Active cooling dehumidification rate fitted via stage-2 moisture balance. Analytic standard error unavailable. |
+| **{win}$** | Natural ventilation conductance (open window) | **.4500 \text{ h}^{-1}$** | *Unavailable* | *Unavailable* | **NOT_IDENTIFIABLE_FROM_AVAILABLE_DATA** | No window state telemetry in CU-BEMS dataset. Assumed based on ASHRAE natural ventilation literature (Sensitivity range: [0.20, 0.70]). |
+| **{win}$** | Natural ventilation moisture exchange | **.5000 \text{ h}^{-1}$** | *Unavailable* | *Unavailable* | **NOT_IDENTIFIABLE_FROM_AVAILABLE_DATA** | No window state telemetry in CU-BEMS dataset. Assumed based on ASHRAE natural ventilation literature (Sensitivity range: [0.25, 0.75]). |
 
 ---
 
