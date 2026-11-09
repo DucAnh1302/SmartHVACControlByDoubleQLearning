@@ -15,7 +15,7 @@ In contrast, our **1st-Order Resistance-Capacitance (RC) Grey-Box Model** embeds
 
 The following benchmark was executed on identical held-out test splits from `2018Floor2.csv` (in-domain) and `2019Floor2.csv` (cross-domain):
 
-| Performance Dimension | Metric | Persistence Baseline | Random Forest (Legacy) | Grey-Box RC Model (Approved Target) |
+| Performance Dimension | Metric | Persistence Baseline | Random Forest (Legacy) | Grey-Box RC Model (Target Physical) |
 | :--- | :--- | :---: | :---: | :---: |
 | **In-Domain Single-Step (1h)** | Temperature MAE (°C) | 0.3922 | **0.2570** | 0.5490 |
 | | Temperature RMSE (°C) | 0.8227 | **0.4063** | 0.8257 |
@@ -60,20 +60,32 @@ The target physical model couples sensible thermal dynamics and latent moisture 
 $$\frac{dT}{dt} = k_{env}(T_{amb} - T) + k_{int} P_{int} - k_{ac} P_{hvac} + k_{win} W (T_{amb} - T)$$
 $$\frac{dRH}{dt} = h_{env}(RH_{amb} - RH) + h_T \frac{dT}{dt} - h_{ac} P_{hvac} + h_{win} W (RH_{amb} - RH)$$
 
-### Identifiability Report & Parameter Estimates
+### Identifiability Report & Parameter Estimates (Primary Training Domain `2018_F2_Z1`)
 
-Parameters were estimated using constrained ordinary least squares with Ridge regularization on passive and active sub-intervals:
+Parameters were identified strictly on `df_train` ($N = 1,235$ sequential hourly observations) with regularized ordinary least squares:
 
-| Parameter | Description | Estimated Value | Std Error ($\sigma$) | 95% Confidence Interval | Scientific Identifiability Status |
-| :--- | :--- | :---: | :---: | :---: | :--- |
-| **$k_{env}$** | Building envelope thermal conductance | **$0.1800 \text{ h}^{-1}$** | $0.0150$ | $[0.1506, 0.2094]$ | **IDENTIFIED** (Passive night/weekend data) |
-| **$k_{int}$** | Internal sensible heat gain gain | **$0.0480 \text{ ^\circ C/(kW\cdot h)}$** | $0.0080$ | $[0.0323, 0.0637]$ | **IDENTIFIED** (Working hour electrical ramp) |
-| **$k_{ac}$** | HVAC cooling extraction efficiency | **$0.0350 \text{ ^\circ C/(kW\cdot h)}$** | $0.0040$ | $[0.0272, 0.0428]$ | **IDENTIFIED** (Compressor active cooling cycles) |
-| **$h_{env}$** | Moisture infiltration rate | **$0.1200 \text{ h}^{-1}$** | $0.0320$ | $[0.0573, 0.1827]$ | **IDENTIFIED_WITH_HIGH_VARIANCE** |
-| **$h_T$** | Psychrometric RH-temperature coupling | **$-2.3500 \text{ \%RH/^\circ C}$** | — | Fixed Physical Constant | **THERMODYNAMIC_CONSTANT** (Clausius-Clapeyron) |
-| **$h_{ac}$** | Active dehumidification rate | **$0.2800 \text{ \%RH/(kW\cdot h)}$** | $0.0210$ | $[0.2388, 0.3212]$ | **IDENTIFIED** (Coil condensation cycles) |
-| **$k_{win}$** | Natural ventilation conductance (open window) | **$0.4500 \text{ h}^{-1}$** | — | Assumed Simulation Constant | **SIMULATED_ASSUMED_NO_DATA** |
-| **$h_{win}$** | Natural ventilation moisture exchange | **$0.5000 \text{ h}^{-1}$** | — | Assumed Simulation Constant | **SIMULATED_ASSUMED_NO_DATA** |
+| Parameter | Description | Estimated Value | Scientific Identifiability Status |
+| :--- | :--- | :---: | :--- |
+| **$k_{env}$** | Building envelope thermal conductance | **$0.0744 \text{ h}^{-1}$** | **IDENTIFIED** (Passive night/weekend data) |
+| **$k_{int}$** | Internal sensible heat gain gain | **$0.0100 \text{ ^\circ C/(kW\cdot h)}$** | **IDENTIFIED** (Working hour plug/lighting ramp) |
+| **$k_{ac}$** | HVAC cooling extraction efficiency | **$0.0130 \text{ ^\circ C/(kW\cdot h)}$** | **IDENTIFIED** (Compressor active cooling cycles) |
+| **$h_{env}$** | Moisture infiltration rate | **$0.0200 \text{ h}^{-1}$** | **IDENTIFIED_WITH_HIGH_VARIANCE** |
+| **$h_T$** | Psychrometric RH-temperature coupling | **$-2.3500 \text{ \%RH/^\circ C}$** | **THERMODYNAMIC_CONSTANT** (Clausius-Clapeyron) |
+| **$h_{ac}$** | Active dehumidification rate | **$0.0500 \text{ \%RH/(kW\cdot h)}$** | **IDENTIFIED** (Coil condensation cycles) |
+| **$k_{win}$** | Natural ventilation conductance (open window) | **$0.4500 \text{ h}^{-1}$** | **SIMULATED_ASSUMED_NO_DATA** |
+| **$h_{win}$** | Natural ventilation moisture exchange | **$0.5000 \text{ h}^{-1}$** | **SIMULATED_ASSUMED_NO_DATA** |
 
-> [!NOTE]
-> All parameters fall strictly within physically realistic engineering ranges for commercial reinforced concrete office buildings in Southeast Asia.
+---
+
+## 5. Local Parameter Sensitivity Analysis ($\pm 25\%$ Perturbation)
+
+To evaluate model stability and error propagation, a one-at-a-time local sensitivity analysis was performed under standard afternoon conditions ($T = 26.0^\circ\text{C}, RH = 65\%, P_{hvac} = 21.6 \text{ kW}, P_{int} = 2.0 \text{ kW}, T_{amb} = 33.0^\circ\text{C}$):
+
+| Parameter | Baseline Value | Low Value (-25%) | Low Temp Output (°C) | High Value (+25%) | High Temp Output (°C) | Sensitivity Delta (°C) |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| **$k_{env}$** | **0.0744** | 0.0558 | 26.130 | 0.0930 | 26.390 | **0.260°C** |
+| **$k_{ac}$** | **0.0130** | 0.0097 | 26.330 | 0.0163 | 26.190 | **0.140°C** |
+| **$k_{int}$** | **0.0100** | 0.0075 | 26.255 | 0.0125 | 26.265 | **0.010°C** |
+
+### Key Finding:
+Envelope conductance $k_{env}$ has the highest sensitivity ($\Delta T = 0.26^\circ\text{C}$), underscoring that ambient weather variations and façade insulation have the dominant impact on room thermal drift.

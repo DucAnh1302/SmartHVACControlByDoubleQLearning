@@ -144,6 +144,19 @@ class TargetHVACEnv:
         self.last_action = 0
         self.current_state_idx = 0
 
+    def get_model_config(self) -> Dict[str, Any]:
+        """Return exact model configuration and provenance used by this environment."""
+        return {
+            "thermal_model_name": self.thermal_model.name,
+            "is_fitted": getattr(self.thermal_model, "is_fitted", False),
+            "thermal_model_is_fitted": getattr(self.thermal_model, "is_fitted", False),
+            "thermal_model_provenance": getattr(self.thermal_model, "provenance", ProvenanceType.SIMULATED_ASSUMED).value,
+            "parameters": self.thermal_model.params.to_dict() if hasattr(self.thermal_model, "params") else {},
+            "calibration_domain": self.calibration.domain_id,
+            "calibration_stages": self.calibration.stage_power_map,
+            "episode_length": self.episode_length
+        }
+
     def reset(
         self,
         start_idx: Optional[int] = None,

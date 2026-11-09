@@ -141,3 +141,43 @@ def test_diagnostics_and_coverage():
     assert diag["coverage_pct"] == 1.0
     assert "avg_max_q" in diag
     assert "current_epsilon" in diag
+
+
+def test_target_env_model_config_reflection():
+    """
+    Verify that TargetHVACEnv accurately exposes its underlying physical model
+    parameters, fitting state, and provenance via get_model_config().
+    """
+    import pandas as pd
+    from src.environment.target_env import TargetHVACEnv
+    from src.environment.greybox_model import GreyBoxThermalModel
+    from src.data.provenance import ProvenanceType
+
+    df_dummy = pd.DataFrame({
+        "temp_c": [25.0] * 24,
+        "humidity_rh": [60.0] * 24,
+        "internal_heat_kw": [2.0] * 24,
+        "ambient_temp_est": [30.0] * 24,
+        "ambient_rh_est": [70.0] * 24,
+        "hour": list(range(24)),
+        "dayofweek": [0] * 24,
+        "hvac_kw": [15.0] * 24
+    })
+
+    # Case 1: Un-fitted default
+    env_unfitted = TargetHVACEnv(data_df=df_dummy)
+    cfg_unfitted = env_unfitted.get_model_config()
+    assert cfg_unfitted["thermal_model_is_fitted"] is False
+    assert cfg_unfitted["thermal_model_provenance"] == ProvenanceType.SIMULATED_ASSUMED.value
+
+    # Case 2: Explicitly fitted model
+    thermal_model = GreyBoxThermalModel()
+    thermal_model.is_fitted = True
+    thermal_model.provenance = ProvenanceType.FITTED_WITH_CAVEAT
+    thermal_model.parameters_calibrated = True
+
+    env_fitted = TargetHVACEnv(data_df=df_dummy, thermal_model=thermal_model)
+    cfg_fitted = env_fitted.get_model_config()
+    assert cfg_fitted["thermal_model_is_fitted"] is True
+    assert cfg_fitted["thermal_model_provenance"] == ProvenanceType.FITTED_WITH_CAVEAT.value
+

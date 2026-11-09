@@ -97,6 +97,46 @@ class EnergySavingPolicy(BaseAgent):
         pass
 
 
+class ACOffPolicy(BaseAgent):
+    """
+    Lower-bound baseline: Turns AC completely OFF (Action 3: AC_OFF) at all times.
+    Measures passive building thermal inertia and provides the zero-energy cost reference.
+    """
+
+    def __init__(self, n_states: int = 600, n_actions: int = 5):
+        super().__init__(n_states, n_actions, name="AC-Always-Off Baseline")
+
+    def select_action(self, state: int, evaluate: bool = False) -> int:
+        return 3  # AC_OFF
+
+    def update(self, state: int, action: int, reward: float, next_state: int, done: bool) -> None:
+        pass
+
+
+class RuleBasedThermostatPolicy(BaseAgent):
+    """
+    Standard commercial deadband thermostat controller:
+    - If indoor temp > 25.5°C (t_bin >= 6): Cooling boost (SET_23, Action 1)
+    - If indoor temp < 23.5°C (t_bin <= 3): Overcooling protection (AC_OFF, Action 3)
+    - Otherwise within deadband (23.5 - 25.5°C): Maintain (SET_25, Action 0)
+    """
+
+    def __init__(self, n_states: int = 600, n_actions: int = 5):
+        super().__init__(n_states, n_actions, name="Rule-Based Thermostat")
+
+    def select_action(self, state: int, evaluate: bool = False) -> int:
+        t_bin, rh_bin, load_bin, time_bin = index_to_state_tuple_600(state)
+        if t_bin >= 6:
+            return 1  # SET_23
+        elif t_bin <= 3:
+            return 3  # AC_OFF
+        else:
+            return 0  # SET_25
+
+    def update(self, state: int, action: int, reward: float, next_state: int, done: bool) -> None:
+        pass
+
+
 class LegacyDQLAdapter(BaseAgent):
     """
     Adapts legacy 45-state Double Q-Learning agent to the 600-state environment.

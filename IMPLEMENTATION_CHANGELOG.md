@@ -91,3 +91,57 @@ The original Phase 1–6 implementation was strictly preserved under Git version
 - **`BAO_CAO_TONG_KET_DO_AN.md`** [NEW] — Comprehensive Vietnamese academic final report.
 - **`README.md`** [UPDATED] — Updated system architecture, reproducibility guide, benchmark highlights, and directory layout.
 - **`IMPLEMENTATION_STATUS.md`** [UPDATED] — 100% completion recorded across all implementation tasks.
+
+---
+
+## Scientific Validation and Rigor Audit Phase (2026-11-09)
+
+### 1. Data Leakage Elimination & 3-Way Target Domain Partition
+- **`src/data/domain_loader.py`**:
+  - Replaced unconstrained `bfill().ffill()` with bounded interpolation (`max_interpolate_hours=3`).
+  - Added binary quality tracking masks: `temp_is_interpolated` and `rh_is_interpolated`.
+  - Implemented `split_target_domain_dataset(df, calib_ratio=0.20, adapt_ratio=0.40, test_ratio=0.40)` with zero temporal overlap.
+  - Implemented dynamic archive path resolution (no hardcoded machine usernames).
+- **`src/data/loader.py`**:
+  - Removed hardcoded machine paths; added dynamic environment variable and relative fallback resolution.
+
+### 2. Physical Model Integrity & Fitting Pipeline
+- **`src/environment/greybox_model.py`**:
+  - Enforced explicit fitting requirements: raises `ValueError` if valid observations $N < 50$.
+  - Added `save()` and `load()` JSON parameter serialization.
+  - Added `perform_sensitivity_analysis(...)` calculating local parameter sensitivity ($\pm 25\%$).
+  - Updated default placeholder parameters to `SIMULATED_ASSUMED` (preventing silent masquerading as fitted).
+- **`src/environment/target_env.py`**:
+  - Added `get_model_config()` method exposing active physical model parameters, calibration stages, and provenance.
+
+### 3. Scientific Provenance Corrections
+- **`src/data/provenance.py`**:
+  - Added `FITTED` and `SIMULATED` to `ProvenanceType`.
+  - Corrected `ambient_temp` and `ambient_rh` from `EXTERNAL` to `SIMULATED_ASSUMED` reflecting synthetic diurnal equation.
+
+### 4. Multi-Seed Baseline Benchmark & Single Q-Learning Direct Comparison
+- **`src/agent/baseline_policies.py`**:
+  - Added `RuleBasedThermostatPolicy` (commercial deadband thermostat) and `ACOffPolicy` (lower-bound energy reference).
+- **`src/evaluation/benchmark_suite.py`**:
+  - Implemented `evaluate_all_baselines_multiseed` across 5 random seeds (`42, 101, 202, 303, 404`).
+  - Computed 95% Confidence Intervals, Degree-Hours, Switching events, and Energy savings vs Fixed-25°C.
+  - Rewrote `DomainShiftBenchmark` to strictly use the 3-way non-leaking partition with multi-budget fine-tuning (10 and 25 episodes).
+- **`train_target_dql.py`**:
+  - Trained `QLearningAgent` (600 states) on identical environment to evaluate overestimation bias against Double Q-Learning.
+  - Saved `dql_vs_ql_overestimation.png` and `baselines_multiseed_raw.csv`.
+
+### 5. Automated Testing Expansion (32/32 Tests Passing)
+- **`tests/test_data_leakage.py`**: Added 3 tests (3-way partition integrity, deliberate leakage detection, bounded interpolation with quality mask).
+- **`tests/test_physical_consistency.py`**: Added test for un-fitted model flag and sample size rejection ($N < 50$).
+- **`tests/test_target_dql.py`**: Added test for environment physical configuration reflection via `get_model_config()`.
+
+### 6. User Interface Contrast & Full-Width Compliance
+- **`.streamlit/config.toml`**: Configured dark theme (`base="dark"`, `backgroundColor="#0b1120"`, `textColor="#f1f5f9"`).
+- **`app/app.py`**:
+  - Applied fluid full-width layout (`[DIR-202611-002]`).
+  - Enforced high-contrast typography (`#38bdf8` electric cyan headings, `#1e293b` cards with `#f1f5f9` text).
+  - Integrated all 9 selectable controllers, sensitivity table, and multi-seed benchmark tabs.
+
+### 7. Documentation & Final Academic Report
+- **`BAO_CAO_TONG_KET_DO_AN.md`**: Expanded into 20 comprehensive Vietnamese chapters with exact executed numbers.
+- **`GENERALIZATION_BENCHMARK.md`**, **`TRAINING_AND_EVALUATION.md`**, **`PHYSICAL_MODEL_VALIDATION.md`**, **`DATASET_AND_PROVENANCE.md`**, **`IMPLEMENTATION_STATUS.md`**, **`README.md`**: Fully updated.

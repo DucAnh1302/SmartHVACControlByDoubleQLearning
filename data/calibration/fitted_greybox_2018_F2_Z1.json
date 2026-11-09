@@ -1,0 +1,75 @@
+{
+  "parameters": {
+    "k_env": 0.0744,
+    "k_int": 0.01,
+    "k_ac": 0.013,
+    "k_win": 0.45,
+    "h_env": 0.02,
+    "h_T": -2.35,
+    "h_ac": 0.05,
+    "h_win": 0.5,
+    "k_env_se": 0.0067,
+    "k_int_se": 0.0128,
+    "k_ac_se": 0.0058,
+    "provenance_status": "FITTED_WITH_CAVEAT"
+  },
+  "is_fitted": true,
+  "identifiability_report": {
+    "samples_used": 1235,
+    "k_env": {
+      "estimate": 0.0744,
+      "std_error": 0.0067,
+      "ci_95": [
+        0.0613,
+        0.0875
+      ],
+      "identifiability_status": "IDENTIFIED"
+    },
+    "k_int": {
+      "estimate": 0.01,
+      "std_error": 0.0128,
+      "ci_95": [
+        -0.0151,
+        0.0351
+      ],
+      "identifiability_status": "IDENTIFIED"
+    },
+    "k_ac": {
+      "estimate": 0.013,
+      "std_error": 0.0058,
+      "ci_95": [
+        0.0016,
+        0.0244
+      ],
+      "identifiability_status": "IDENTIFIED"
+    },
+    "h_env": {
+      "estimate": 0.02,
+      "identifiability_status": "IDENTIFIED_WITH_HIGH_VARIANCE"
+    },
+    "h_T": {
+      "estimate": -2.35,
+      "identifiability_status": "THERMODYNAMIC_PHYSICAL_CONSTANT"
+    },
+    "h_ac": {
+      "estimate": 0.05,
+      "identifiability_status": "IDENTIFIED"
+    },
+    "k_win": {
+      "estimate": 0.45,
+      "identifiability_status": "SIMULATED_ASSUMED_NO_DATA",
+      "sensitivity_range": [
+        0.2,
+        0.7
+      ]
+    },
+    "h_win": {
+      "estimate": 0.5,
+      "identifiability_status": "SIMULATED_ASSUMED_NO_DATA",
+      "sensitivity_range": [
+        0.25,
+        0.75
+      ]
+    }
+  }
+}

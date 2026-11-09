@@ -143,3 +143,32 @@ def test_temperature_safe_bounding():
         hour=4, window_open=0
     )
     assert t_low >= 16.0
+
+
+def test_unfitted_model_flag_and_sample_size_rejection():
+    """
+    Ensure un-fitted GreyBoxThermalModel has is_fitted=False and SIMULATED_ASSUMED provenance,
+    and that fit() strictly refuses to fit if fewer than 50 valid samples are provided.
+    """
+    import pytest
+    import pandas as pd
+    from src.data.provenance import ProvenanceType
+
+    # Default un-fitted model
+    unfitted = GreyBoxThermalModel()
+    assert unfitted.is_fitted is False
+    assert unfitted.parameters_calibrated is False
+    assert unfitted.provenance == ProvenanceType.SIMULATED_ASSUMED
+
+    # Small dataframe with only 20 samples (< 50 minimum)
+    df_small = pd.DataFrame({
+        "temp_c": np.linspace(24, 26, 20),
+        "humidity_rh": np.linspace(55, 65, 20),
+        "ambient_temp_est": np.linspace(30, 32, 20),
+        "hvac_kw": np.ones(20) * 10.0,
+        "internal_heat_kw": np.ones(20) * 2.0
+    })
+
+    with pytest.raises(ValueError, match="insufficient valid observations"):
+        unfitted.fit(df_small)
+

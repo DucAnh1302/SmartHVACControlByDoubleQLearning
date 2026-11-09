@@ -11,13 +11,17 @@ import numpy as np
 
 
 def get_default_data_path() -> Path:
-    """Resolve default raw dataset directory."""
-    # Try looking in ../../dataset/archive first
+    """Resolve default raw dataset directory dynamically."""
+    env_dir = os.environ.get("CUBEMS_DATASET_DIR")
+    if env_dir and Path(env_dir).exists():
+        return Path(env_dir)
+
     curr_dir = Path(__file__).resolve().parent
     candidates = [
         curr_dir.parents[2] / "dataset" / "archive",
-        Path(r"C:\Users\LENOVO\Desktop\SmartHVAC\dataset\archive"),
         curr_dir.parents[1] / "data" / "raw",
+        Path.cwd() / "dataset" / "archive",
+        Path.cwd().parent / "dataset" / "archive"
     ]
     for c in candidates:
         if c.exists() and any(c.glob("*.csv")):

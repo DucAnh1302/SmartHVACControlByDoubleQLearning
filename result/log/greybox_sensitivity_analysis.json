@@ -1,0 +1,29 @@
+[
+  {
+    "Parameter": "k_env",
+    "Baseline Value": 0.0744,
+    "Low Value (-25%)": 0.0558,
+    "Low Temp Output (\u00b0C)": 26.13,
+    "High Value (+25%)": 0.093,
+    "High Temp Output (\u00b0C)": 26.39,
+    "Sensitivity Delta (\u00b0C)": 0.26
+  },
+  {
+    "Parameter": "k_int",
+    "Baseline Value": 0.01,
+    "Low Value (-25%)": 0.0075,
+    "Low Temp Output (\u00b0C)": 26.255,
+    "High Value (+25%)": 0.0125,
+    "High Temp Output (\u00b0C)": 26.265,
+    "Sensitivity Delta (\u00b0C)": 0.01
+  },
+  {
+    "Parameter": "k_ac",
+    "Baseline Value": 0.013,
+    "Low Value (-25%)": 0.0097,
+    "Low Temp Output (\u00b0C)": 26.33,
+    "High Value (+25%)": 0.0163,
+    "High Temp Output (\u00b0C)": 26.19,
+    "Sensitivity Delta (\u00b0C)": 0.14
+  }
+]

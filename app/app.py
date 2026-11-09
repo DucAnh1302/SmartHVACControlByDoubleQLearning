@@ -32,9 +32,10 @@ from src.data.provenance import SYSTEM_PROVENANCE_REGISTRY, ProvenanceType
 from src.environment.target_env import TargetHVACEnv, TARGET_ACTIONS
 from src.agent.target_double_q_agent import TargetDoubleQLearningAgent
 from src.agent.double_q_learning_agent import DoubleQLearningAgent
+from src.agent.q_learning_agent import QLearningAgent
 from src.agent.baseline_policies import (
     FixedSetpointPolicy, ComfortFirstPolicy, EnergySavingPolicy,
-    RandomPolicy, LegacyDQLAdapter
+    RandomPolicy, LegacyDQLAdapter, RuleBasedThermostatPolicy, ACOffPolicy
 )
 from src.safety.safety_gateway import SafetyGateway, DeploymentReadinessLevel
 
@@ -59,16 +60,14 @@ st.markdown("""
         padding-right: 2.5rem !important;
     }
 
-    /* High contrast, luminous typography */
+    /* High contrast, luminous typography without transparent webkit hacks */
     .main-title {
         font-size: 2.15rem;
         font-weight: 800;
         color: #38bdf8 !important;
-        background: linear-gradient(120deg, #60a5fa 0%, #38bdf8 50%, #34d399 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        margin-bottom: 0.25rem;
+        margin-bottom: 0.35rem;
         letter-spacing: -0.3px;
+        text-shadow: 0 0 20px rgba(56, 189, 248, 0.25);
     }
     .sub-title {
         font-size: 1.02rem;
@@ -80,19 +79,22 @@ st.markdown("""
 
     /* High-contrast status box with dark slate card */
     .status-box {
-        padding: 16px 20px;
-        border-radius: 8px;
+        padding: 16px 20px !important;
+        border-radius: 8px !important;
         background-color: #1e293b !important;
         color: #f1f5f9 !important;
-        border: 1px solid #334155;
+        border: 1px solid #334155 !important;
         border-left: 5px solid #38bdf8 !important;
-        margin-bottom: 16px;
-        line-height: 1.7;
-        font-size: 0.95rem;
+        margin-bottom: 16px !important;
+        line-height: 1.7 !important;
+        font-size: 0.95rem !important;
+    }
+    .status-box, .status-box p, .status-box span, .status-box div {
+        color: #f1f5f9 !important;
     }
     .status-box b, .status-box strong {
         color: #38bdf8 !important;
-        font-weight: 700;
+        font-weight: 700 !important;
     }
     .status-box code {
         background-color: #0f172a !important;
@@ -146,14 +148,20 @@ def load_all_models():
     if target_dql_path.exists():
         models["Target Double Q-Learning (600s)"] = TargetDoubleQLearningAgent.load(str(target_dql_path))
 
+    single_q_path = model_dir / "single_q_model.pkl"
+    if single_q_path.exists():
+        models["Single Q-Learning (600s)"] = QLearningAgent.load(str(single_q_path))
+
     legacy_dql_path = model_dir / "double_q_learning_model.pkl"
     if legacy_dql_path.exists():
         legacy = DoubleQLearningAgent.load(str(legacy_dql_path))
         models["Legacy DQL (45s Adapted)"] = LegacyDQLAdapter(legacy)
 
     models["Fixed Setpoint (25°C)"] = FixedSetpointPolicy()
+    models["Rule-Based Thermostat"] = RuleBasedThermostatPolicy()
     models["Comfort-First Policy"] = ComfortFirstPolicy()
     models["Energy-Saving Policy"] = EnergySavingPolicy()
+    models["AC-Always-Off Baseline"] = ACOffPolicy()
     models["Random Policy"] = RandomPolicy()
     return models
 
@@ -358,10 +366,12 @@ elif menu_choice == "🌐 Điểm Chuẩn Tổng Quát Hóa (Generalization Benc
                 st.image(str(shift_img), use_container_width=True)
 
             st.markdown("""
-            #### 💡 Nhận Xét Khoa Học Từ Điểm Chuẩn:
-            1. **ZERO-SHOT:** Áp dụng trực tiếp Q-Table sang miền năm 2019 khiến Reward giảm sâu (-118.93) do công suất các cấp điều hòa bị lệch vật lý đáng kể (LOW tăng từ 9.7 kW lên 19.7 kW).
-            2. **CALIBRATION-ONLY:** Chỉ cần tái hiệu chuẩn ánh xạ công suất thiết bị bằng K-Means mà **không cần huấn luyện lại bất kỳ bước nào**, Reward lập tức cải thiện rõ rệt (-104.07) và tỷ lệ vi phạm giảm mạnh.
-            3. **FINE-TUNING:** Khi cho phép Agent học thích nghi cục bộ chỉ với **ngân sách 25 episodes**, hiệu năng vượt trội (+48% Reward so với Zero-Shot), khẳng định tri thức cốt lõi đã học được từ năm 2018 có tính chuyển giao cao.
+            #### 💡 Nhận Xét Khoa Học Từ Điểm Chuẩn Tổng Quát Hóa (Leakage-Free 3-Way Partition):
+            1. **ZERO-SHOT:** Chuyển giao trực tiếp Q-Table sang các miền khác khi thiết bị bị lệch công suất vật lý gây sụt giảm nghiêm trọng hiệu năng. Đặc biệt trên miền `2018_F3_Z1`, Reward rớt xuống **-61.62** với **14.37% vi phạm nhiệt độ nghiêm trọng**.
+            2. **CALIBRATION-ONLY (0 Retraining Episodes):** Chỉ cần tái hiệu chuẩn ánh xạ công suất bằng phân cụ K-Means trên tập calib (20% dữ liệu) mà **không huấn luyện lại bất kỳ bước nào**, Reward trên `2018_F3_Z1` lập tức tăng vọt lên **-31.83** (+48.3% cải thiện) và tỷ lệ vi phạm nghiêm trọng giảm từ 14.37% xuống chỉ còn 5.42%!
+            3. **FINE-TUNING (Ngân sách nhỏ 10-25 Episodes):** Khi cho phép Agent học thích nghi cục bộ trên tập adaptation:
+               - Miền `2018_F3_Z1`: Với 25 episodes, Reward đạt **-20.19**, vi phạm nghiêm trọng chỉ còn **1.25%**, tiết kiệm năng lượng 160.6 kWh/ngày.
+               - Miền `2018_F2_Z2`: Chỉ với 10 episodes, Reward đạt **-24.26**, vi phạm nghiêm trọng giảm từ 11.25% xuống còn **2.29%**.
             """)
         else:
             st.info("Chưa có kết quả điểm chuẩn. Hãy chạy `train_target_dql.py` để tạo báo cáo.")
@@ -370,11 +380,22 @@ elif menu_choice == "🌐 Điểm Chuẩn Tổng Quát Hóa (Generalization Benc
         base_csv = project_root / "result" / "log" / "baselines_benchmark.csv"
         if base_csv.exists():
             df_base = pd.read_csv(base_csv)
+            st.markdown("##### 📋 Bảng Thống Kê Điểm Chuẩn Đa Hạt Giống (5 Random Seeds: 42, 101, 202, 303, 404)")
             st.dataframe(df_base, use_container_width=True)
 
             base_img = project_root / "result" / "figure" / "baselines_comparison.png"
             if base_img.exists():
                 st.image(str(base_img), use_container_width=True)
+
+            ov_img = project_root / "result" / "figure" / "dql_vs_ql_overestimation.png"
+            if ov_img.exists():
+                st.markdown("##### 🔬 So Sánh Hiện Tượng Thổi Phồng Giá Trị (Overestimation Bias): Double Q-Learning vs Single Q-Learning")
+                st.image(str(ov_img), use_container_width=True)
+
+            raw_seeds_csv = project_root / "result" / "log" / "baselines_multiseed_raw.csv"
+            if raw_seeds_csv.exists():
+                with st.expander("🔍 Xem Bảng Dữ Liệu Chi Tiết Từng Hạt Giống (Raw Seed Runs)"):
+                    st.dataframe(pd.read_csv(raw_seeds_csv), use_container_width=True)
 
 
 # =========================================================================
@@ -394,6 +415,14 @@ elif menu_choice == "🔬 Đánh Giá Mô Hình Truyền Nhiệt (Transition Mod
         - **Random Forest (Legacy):** Dù đạt $R^2 = 0.9554$ trên tập huấn luyện nội bộ nhờ học vẹt chu kỳ nhiệt độ, nhưng **THẤT BẠI ở kiểm tra tính nhất quán vật lý (FAIL Physics Consistency)** và sai số bùng nổ lên **1.425°C MAE** khi kiểm thử trên miền năm 2019.
         - **Grey-Box RC Model:** Tuân thủ tuyệt đối định luật nhiệt động lực học (**PASS Physics Consistency**), giữ vững sai số ổn định **0.602°C MAE** trên miền chưa từng thấy.
         """)
+
+    sens_csv = project_root / "result" / "log" / "greybox_sensitivity_analysis.csv"
+    if sens_csv.exists():
+        st.markdown("---")
+        st.markdown("#### 📐 Phân Tích Độ Nhạy Tham Số Vật Lý (Local Sensitivity Analysis ±25%)")
+        df_sens = pd.read_csv(sens_csv)
+        st.dataframe(df_sens, use_container_width=True)
+        st.caption("Ghi chú: Tham số truyền nhiệt vỏ công trình k_env có tác động mạnh nhất đến dao động nhiệt độ (Delta 0.260°C khi biến thiên ±25%).")
 
 
 # =========================================================================
