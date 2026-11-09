@@ -147,6 +147,11 @@ class GreyBoxThermalModel(BaseTransitionModel):
             provenance_status=ProvenanceType.FITTED_WITH_CAVEAT.value
         )
 
+        # Check boundary touching for thermal parameters
+        k_int_status = "FITTED_AT_BOUNDARY_CAVEAT" if (k_int_est <= 0.0101 or k_int_est >= 0.1499) else "IDENTIFIED"
+        k_env_status = "FITTED_AT_BOUNDARY_CAVEAT" if (k_env_est <= 0.0501 or k_env_est >= 0.4499) else "IDENTIFIED"
+        k_ac_status = "FITTED_AT_BOUNDARY_CAVEAT" if (k_ac_est <= 0.0101 or k_ac_est >= 0.1199) else "IDENTIFIED"
+
         self.parameter_identifiability_report = {
             "samples_used": N,
             "k_env": {
@@ -154,42 +159,50 @@ class GreyBoxThermalModel(BaseTransitionModel):
                 "std_error": self.params.k_env_se,
                 "ci_95": [round(self.params.k_env - 1.96 * self.params.k_env_se, 4),
                           round(self.params.k_env + 1.96 * self.params.k_env_se, 4)],
-                "identifiability_status": "IDENTIFIED"
+                "identifiability_status": k_env_status,
+                "note": "Ambient heat infiltration conductance per building thermal mass."
             },
             "k_int": {
                 "estimate": self.params.k_int,
                 "std_error": self.params.k_int_se,
                 "ci_95": [round(self.params.k_int - 1.96 * self.params.k_int_se, 4),
                           round(self.params.k_int + 1.96 * self.params.k_int_se, 4)],
-                "identifiability_status": "IDENTIFIED"
+                "identifiability_status": k_int_status,
+                "note": "Internal heat gain coefficient. Low telemetry excitation during unoccupied hours."
             },
             "k_ac": {
                 "estimate": self.params.k_ac,
                 "std_error": self.params.k_ac_se,
                 "ci_95": [round(self.params.k_ac - 1.96 * self.params.k_ac_se, 4),
                           round(self.params.k_ac + 1.96 * self.params.k_ac_se, 4)],
-                "identifiability_status": "IDENTIFIED"
+                "identifiability_status": k_ac_status,
+                "note": "Direct HVAC cooling temperature reduction rate."
             },
             "h_env": {
                 "estimate": self.params.h_env,
-                "identifiability_status": "IDENTIFIED_WITH_HIGH_VARIANCE"
+                "identifiability_status": "IDENTIFIED_WITH_HIGH_VARIANCE",
+                "note": "Moisture infiltration rate influenced by building envelope leaks."
             },
             "h_T": {
                 "estimate": self.params.h_T,
-                "identifiability_status": "THERMODYNAMIC_PHYSICAL_CONSTANT"
+                "identifiability_status": "EMPIRICAL_PSYCHROMETRIC_APPROXIMATION",
+                "note": "Linear psychrometric approximation of Clausius-Clapeyron curve around 25°C, not a universal constant."
             },
             "h_ac": {
                 "estimate": self.params.h_ac,
-                "identifiability_status": "IDENTIFIED"
+                "identifiability_status": "IDENTIFIED",
+                "note": "Active cooling dehumidification rate."
             },
             "k_win": {
                 "estimate": self.params.k_win,
-                "identifiability_status": "SIMULATED_ASSUMED_NO_DATA",
+                "identifiability_status": "NOT_IDENTIFIABLE_FROM_AVAILABLE_DATA",
+                "note": "No window state telemetry in CU-BEMS dataset. Assumed based on ASHRAE natural ventilation literature.",
                 "sensitivity_range": [0.20, 0.70]
             },
             "h_win": {
                 "estimate": self.params.h_win,
-                "identifiability_status": "SIMULATED_ASSUMED_NO_DATA",
+                "identifiability_status": "NOT_IDENTIFIABLE_FROM_AVAILABLE_DATA",
+                "note": "No window state telemetry in CU-BEMS dataset. Assumed based on ASHRAE natural ventilation literature.",
                 "sensitivity_range": [0.25, 0.75]
             }
         }

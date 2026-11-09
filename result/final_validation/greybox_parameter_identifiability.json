@@ -1,0 +1,66 @@
+{
+  "samples_used": 1235,
+  "k_env": {
+    "estimate": 0.0744,
+    "std_error": 0.0067,
+    "ci_95": [
+      0.0613,
+      0.0875
+    ],
+    "identifiability_status": "IDENTIFIED",
+    "note": "Ambient heat infiltration conductance per building thermal mass."
+  },
+  "k_int": {
+    "estimate": 0.01,
+    "std_error": 0.0128,
+    "ci_95": [
+      -0.0151,
+      0.0351
+    ],
+    "identifiability_status": "FITTED_AT_BOUNDARY_CAVEAT",
+    "note": "Internal heat gain coefficient. Low telemetry excitation during unoccupied hours."
+  },
+  "k_ac": {
+    "estimate": 0.013,
+    "std_error": 0.0058,
+    "ci_95": [
+      0.0016,
+      0.0244
+    ],
+    "identifiability_status": "IDENTIFIED",
+    "note": "Direct HVAC cooling temperature reduction rate."
+  },
+  "h_env": {
+    "estimate": 0.02,
+    "identifiability_status": "IDENTIFIED_WITH_HIGH_VARIANCE",
+    "note": "Moisture infiltration rate influenced by building envelope leaks."
+  },
+  "h_T": {
+    "estimate": -2.35,
+    "identifiability_status": "EMPIRICAL_PSYCHROMETRIC_APPROXIMATION",
+    "note": "Linear psychrometric approximation of Clausius-Clapeyron curve around 25°C, not a universal constant."
+  },
+  "h_ac": {
+    "estimate": 0.05,
+    "identifiability_status": "IDENTIFIED",
+    "note": "Active cooling dehumidification rate."
+  },
+  "k_win": {
+    "estimate": 0.45,
+    "identifiability_status": "NOT_IDENTIFIABLE_FROM_AVAILABLE_DATA",
+    "note": "No window state telemetry in CU-BEMS dataset. Assumed based on ASHRAE natural ventilation literature.",
+    "sensitivity_range": [
+      0.2,
+      0.7
+    ]
+  },
+  "h_win": {
+    "estimate": 0.5,
+    "identifiability_status": "NOT_IDENTIFIABLE_FROM_AVAILABLE_DATA",
+    "note": "No window state telemetry in CU-BEMS dataset. Assumed based on ASHRAE natural ventilation literature.",
+    "sensitivity_range": [
+      0.25,
+      0.75
+    ]
+  }
+}

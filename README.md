@@ -32,7 +32,8 @@ Toàn bộ hệ thống được dẫn chứng bằng 11 tài liệu kỹ thuậ
 8. 📝 **[IMPLEMENTATION_CHANGELOG.md](IMPLEMENTATION_CHANGELOG.md)**: Nhật ký chi tiết từng tệp mã nguồn tạo mới, chỉnh sửa và bảo tồn phiên bản cũ.
 9. 🔬 **[TECHNICAL_LIMITATIONS.md](TECHNICAL_LIMITATIONS.md)**: Báo cáo khoa học phản biện chi tiết về giới hạn toán học và nhiệt động học của hệ thống.
 10. 📊 **[IMPLEMENTATION_STATUS.md](IMPLEMENTATION_STATUS.md)**: Bảng theo dõi tiến độ chi tiết từng hạng mục kỹ thuật của đề tài.
-11. 🇻🇳 **[BAO_CAO_TONG_KET_DO_AN.md](BAO_CAO_TONG_KET_DO_AN.md)**: Báo cáo tổng kết đồ án toàn diện gồm 20 chương tiếng Việt phục vụ báo cáo và bảo vệ đồ án trước hội đồng giảng viên.
+11. 🛡️ **[FINAL_VALIDATION_STATUS.md](FINAL_VALIDATION_STATUS.md)**: Báo cáo kiểm định học thuật cuối cùng, bảng đối chiếu tiêu chuẩn, kết quả 40/40 tests và phân tích thống kê 10 hạt giống.
+12. 🇻🇳 **[BAO_CAO_TONG_KET_DO_AN.md](BAO_CAO_TONG_KET_DO_AN.md)**: Báo cáo tổng kết đồ án toàn diện gồm 21 chương tiếng Việt phục vụ báo cáo và bảo vệ đồ án trước hội đồng giảng viên.
 
 ---
 

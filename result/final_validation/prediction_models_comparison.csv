@@ -1,0 +1,4 @@
+Model,1-Step Temp MAE (°C),1-Step Temp RMSE (°C),1-Step Temp R²,6-Hour Rollout MAE (°C),24-Hour Rollout MAE (°C),Physics Consistency,Cross-Domain MAE (°C)
+Persistence Baseline,0.3922,0.8227,0.8172,0.6682,1.7454,PASS,0.4684
+Random Forest (Legacy),0.2588,0.4102,0.9545,0.4918,0.5227,FAIL,1.4417
+Grey-Box RC Model,0.5501,0.8263,0.8156,1.2257,1.9102,PASS,0.6176

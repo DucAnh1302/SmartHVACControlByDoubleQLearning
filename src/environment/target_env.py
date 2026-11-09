@@ -141,8 +141,12 @@ class TargetHVACEnv:
         self.current_temp = 25.5
         self.current_rh = 60.0
         self.window_state = 0   # 0: Closed, 1: Open (Strictly closed initially)
-        self.last_action = 0
+        self.last_action: Optional[int] = None
         self.current_state_idx = 0
+        self.prev_hvac_kw: float = 0.0
+        self.prev_setpoint: Optional[float] = None
+        self.episode_energy_kwh: float = 0.0
+        self.episode_switching_count: int = 0
 
     def get_model_config(self) -> Dict[str, Any]:
         """Return exact model configuration and provenance used by this environment."""
@@ -161,11 +165,23 @@ class TargetHVACEnv:
         self,
         start_idx: Optional[int] = None,
         initial_temp: Optional[float] = None,
-        initial_rh: Optional[float] = None
+        initial_rh: Optional[float] = None,
+        seed: Optional[int] = None
     ) -> Tuple[int, Dict[str, Any]]:
-        """Reset environment to a starting state."""
+        """
+        Reset environment to a starting state with strict episode isolation.
+        Restores all mutable state variables to initial conditions.
+        """
+        if seed is not None:
+            self.rng = np.random.default_rng(seed)
+
         self.current_step = 0
         self.window_state = 0  # Initialized closed
+        self.last_action = None  # Crucial: None prevents spurious switching penalty on step 0
+        self.prev_hvac_kw = 0.0
+        self.prev_setpoint = None
+        self.episode_energy_kwh = 0.0
+        self.episode_switching_count = 0
 
         max_start = len(self.data_df) - self.episode_length - 2
         if max_start <= 0:
@@ -186,7 +202,6 @@ class TargetHVACEnv:
 
         state_tuple = discretize_state_600(self.current_temp, self.current_rh, p_int, hour, dow)
         self.current_state_idx = state_tuple_to_index_600(state_tuple)
-        self.last_action = 0
 
         info = {
             "step": self.current_step,
@@ -197,7 +212,9 @@ class TargetHVACEnv:
             "hour": hour,
             "datetime": str(row.get("datetime", "")),
             "internal_heat_kw": p_int,
-            "ambient_temp": float(row["ambient_temp_est"])
+            "ambient_temp": float(row["ambient_temp_est"]),
+            "episode_energy_kwh": self.episode_energy_kwh,
+            "episode_switching_count": self.episode_switching_count
         }
         return self.current_state_idx, info
 
@@ -234,8 +251,12 @@ class TargetHVACEnv:
         if action not in TARGET_ACTIONS:
             raise ValueError(f"Invalid action {action}! Valid actions are {list(TARGET_ACTIONS.keys())}")
 
-        action_changed = (action != self.last_action)
+        # Action switching penalty is strictly 0 on step 0 (when last_action is None)
+        action_changed = (action != self.last_action) if self.last_action is not None else False
+        if action_changed:
+            self.episode_switching_count += 1
         self.last_action = action
+        self.prev_setpoint = TARGET_ACTION_SETPOINTS.get(action, None)
 
         row = self.data_df.iloc[self.data_idx]
         p_int = float(row["internal_heat_kw"])
@@ -248,6 +269,8 @@ class TargetHVACEnv:
         # 1. Map action to physical HVAC power and window state
         hvac_kw, window_state = self._determine_hvac_power(action, self.current_temp)
         self.window_state = window_state
+        self.prev_hvac_kw = hvac_kw
+        self.episode_energy_kwh += hvac_kw * 1.0
 
         # 2. Physics transition forward
         next_temp, next_rh = self.thermal_model.predict_step(
@@ -302,6 +325,8 @@ class TargetHVACEnv:
             "internal_heat_kw": p_int,
             "hour": hour,
             "state_tuple": state_tuple,
+            "episode_energy_kwh": self.episode_energy_kwh,
+            "episode_switching_count": self.episode_switching_count,
             "provenance": {
                 "temp_c": ProvenanceType.SIMULATED_ASSUMED.value,
                 "humidity_rh": ProvenanceType.SIMULATED_ASSUMED.value,

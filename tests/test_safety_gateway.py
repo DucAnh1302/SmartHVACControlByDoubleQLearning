@@ -148,3 +148,58 @@ def test_mock_bms_hil_controller():
     )
     with pytest.raises(PermissionError):
         hil.send_control_packet(unsafe_cmd)
+
+
+def test_safety_config_immutability():
+    """Verify that SafetyConfig is frozen and provides authoritative defaults."""
+    from src.safety.safety_gateway import SafetyConfig
+    import dataclasses
+
+    config = SafetyConfig()
+    assert config.emergency_freeze_temp == 18.0
+    assert config.emergency_overheat_temp == 29.5
+    assert config.min_cycles_between_toggles == 2
+
+    with pytest.raises(dataclasses.FrozenInstanceError):
+        config.emergency_freeze_temp = 15.0
+
+
+def test_sensor_anomaly_failsafe():
+    """Verify that NaN or physically implausible indoor sensor readings trigger fail-safe."""
+    gateway = SafetyGateway()
+
+    # Case 1: NaN sensor value
+    safe_act, reason = gateway.filter_action(
+        agent_action=1,
+        indoor_temp=float("nan"),
+        ambient_temp=30.0,
+        ambient_rh=60.0,
+        hour=14,
+        step=1
+    )
+    assert safe_act == 0  # Safe default maintain SET_25
+    assert "SENSOR_ANOMALY_FAILSAFE" in reason
+
+    # Case 2: Broken sensor reporting 5.0°C (< 10°C valid min)
+    safe_act2, reason2 = gateway.filter_action(
+        agent_action=3,
+        indoor_temp=5.0,
+        ambient_temp=30.0,
+        ambient_rh=60.0,
+        hour=14,
+        step=2
+    )
+    assert safe_act2 == 0
+    assert "SENSOR_ANOMALY_FAILSAFE" in reason2
+
+    # Case 3: Broken sensor reporting 52.0°C (> 45°C valid max)
+    safe_act3, reason3 = gateway.filter_action(
+        agent_action=1,
+        indoor_temp=52.0,
+        ambient_temp=30.0,
+        ambient_rh=60.0,
+        hour=14,
+        step=3
+    )
+    assert safe_act3 == 0
+    assert "SENSOR_ANOMALY_FAILSAFE" in reason3

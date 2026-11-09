@@ -60,59 +60,66 @@ st.markdown("""
         padding-right: 2.5rem !important;
     }
 
-    /* High contrast, luminous typography without transparent webkit hacks */
+    /* Global typography overrides to ensure readability */
+    html, body, [class*="css"], .stMarkdown {
+        color: #f1f5f9 !important;
+        background-color: #0b1120 !important;
+    }
+
+    /* Main title */
     .main-title {
-        font-size: 2.15rem;
-        font-weight: 800;
+        font-size: 2.15rem !important;
+        font-weight: 800 !important;
         color: #38bdf8 !important;
-        margin-bottom: 0.35rem;
-        letter-spacing: -0.3px;
-        text-shadow: 0 0 20px rgba(56, 189, 248, 0.25);
+        margin-bottom: 0.35rem !important;
+        letter-spacing: -0.3px !important;
     }
     .sub-title {
-        font-size: 1.02rem;
-        color: #94a3b8 !important;
-        margin-bottom: 1.3rem;
-        font-weight: 400;
-        line-height: 1.5;
+        font-size: 1.05rem !important;
+        color: #cbd5e1 !important;
+        margin-bottom: 1.3rem !important;
+        font-weight: 400 !important;
+        line-height: 1.5 !important;
     }
 
     /* High-contrast status box with dark slate card */
     .status-box {
-        padding: 16px 20px !important;
-        border-radius: 8px !important;
+        padding: 18px 22px !important;
+        border-radius: 10px !important;
         background-color: #1e293b !important;
         color: #f1f5f9 !important;
         border: 1px solid #334155 !important;
-        border-left: 5px solid #38bdf8 !important;
-        margin-bottom: 16px !important;
-        line-height: 1.7 !important;
-        font-size: 0.95rem !important;
+        border-left: 6px solid #38bdf8 !important;
+        margin-bottom: 20px !important;
+        line-height: 1.8 !important;
+        font-size: 0.96rem !important;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3) !important;
     }
-    .status-box, .status-box p, .status-box span, .status-box div {
+    .status-box * {
         color: #f1f5f9 !important;
     }
-    .status-box b, .status-box strong {
+    .status-box b, .status-box strong, .status-box .field-label {
         color: #38bdf8 !important;
         font-weight: 700 !important;
     }
-    .status-box code {
+    .status-box code, .status-box .code-badge {
         background-color: #0f172a !important;
         color: #facc15 !important;
-        padding: 2px 7px !important;
+        padding: 2px 8px !important;
         border-radius: 4px !important;
         border: 1px solid #475569 !important;
-        font-weight: 600 !important;
+        font-weight: 700 !important;
+        font-family: monospace !important;
     }
 
     /* Provenance badges with high contrast */
     .prov-badge {
-        display: inline-block;
-        padding: 3px 10px;
-        border-radius: 6px;
-        font-size: 0.78rem;
-        font-weight: 700;
-        letter-spacing: 0.4px;
+        display: inline-block !important;
+        padding: 3px 10px !important;
+        border-radius: 6px !important;
+        font-size: 0.8rem !important;
+        font-weight: 700 !important;
+        letter-spacing: 0.4px !important;
     }
     .prov-observed {
         background-color: #064e3b !important;
@@ -205,17 +212,33 @@ use_safety_gateway_toggle = st.sidebar.toggle("Kích Hoạt Cổng An Toàn Đ�
 # PAGE 1: SCENARIO LAB
 # =========================================================================
 if menu_choice == "🧪 Phòng Thử Nghiệm Kịch Bản (Scenario Lab)":
-    st.markdown('<div class="main-title">🧪 Phòng Thử Nghiệm Kịch Bản Điều Khiển HVAC</div>', unsafe_allow_html=True)
-    st.markdown('<div class="sub-title">Mô phỏng quyết định của Agent trong môi trường vật lý thực nghiệm với nhãn nguồn gốc (Provenance) minh bạch.</div>', unsafe_allow_html=True)
+    st.markdown('<h1 style="color: #38bdf8 !important; font-size: 2.15rem; font-weight: 800; margin-bottom: 0.35rem; letter-spacing: -0.3px;">🧪 Phòng Thử Nghiệm Kịch Bản Điều Khiển HVAC</h1>', unsafe_allow_html=True)
+    st.markdown('<p style="color: #cbd5e1 !important; font-size: 1.05rem; margin-bottom: 1.3rem; font-weight: 400; line-height: 1.5;">Mô phỏng quyết định của Agent trong môi trường vật lý thực nghiệm với nhãn nguồn gốc (Provenance) minh bạch.</p>', unsafe_allow_html=True)
 
     spec = get_domain_spec(selected_domain_id)
     df_domain = get_domain_dataset(selected_domain_id)
 
     st.markdown(f"""
-    <div class="status-box">
-        <b>Đang chạy trên miền:</b> <code>{spec.domain_id}</code> ({spec.description})<br/>
-        <b>Số giờ quan trắc:</b> {len(df_domain):,} giờ | <b>Khoảng thời gian:</b> {df_domain['datetime'].min()} đến {df_domain['datetime'].max()}<br/>
-        <b>Chế độ chuyển giao:</b> <code>{selected_transfer_mode}</code> | <b>Cổng an toàn:</b> {'BẬT (Khóa bảo vệ máy nén & sự cố nhiệt)' if use_safety_gateway_toggle else 'TẮT (Chỉ chạy Agent)'}
+    <div style="background-color: #1e293b !important; color: #f1f5f9 !important; padding: 18px 22px; border-radius: 10px; border: 1px solid #334155; border-left: 6px solid #38bdf8; margin-bottom: 20px; font-size: 0.96rem; line-height: 1.8; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);">
+        <div style="margin-bottom: 6px;">
+            <span style="color: #38bdf8; font-weight: 700;">Đang chạy trên miền:</span> 
+            <span style="background-color: #0f172a; color: #facc15; padding: 3px 8px; border-radius: 4px; border: 1px solid #475569; font-weight: 700; font-family: monospace;">{spec.domain_id}</span> 
+            <span style="color: #cbd5e1; margin-left: 6px;">({spec.description})</span>
+        </div>
+        <div style="margin-bottom: 6px;">
+            <span style="color: #38bdf8; font-weight: 700;">Số giờ quan trắc:</span> 
+            <span style="color: #ffffff; font-weight: 600;">{len(df_domain):,} giờ</span> 
+            <span style="color: #64748b; margin: 0 8px;">|</span> 
+            <span style="color: #38bdf8; font-weight: 700;">Khoảng thời gian:</span> 
+            <span style="color: #ffffff; font-weight: 600;">{df_domain['datetime'].min()} đến {df_domain['datetime'].max()}</span>
+        </div>
+        <div>
+            <span style="color: #38bdf8; font-weight: 700;">Chế độ chuyển giao:</span> 
+            <span style="background-color: #0f172a; color: #38bdf8; padding: 3px 8px; border-radius: 4px; border: 1px solid #0284c7; font-weight: 700; font-family: monospace;">{selected_transfer_mode}</span> 
+            <span style="color: #64748b; margin: 0 8px;">|</span> 
+            <span style="color: #38bdf8; font-weight: 700;">Cổng an toàn:</span> 
+            <span style="color: {'#4ade80' if use_safety_gateway_toggle else '#f87171'}; font-weight: 700;">{'BẬT (Khóa bảo vệ máy nén & sự cố nhiệt)' if use_safety_gateway_toggle else 'TẮT (Chỉ chạy Agent)'}</span>
+        </div>
     </div>
     """, unsafe_allow_html=True)
 
@@ -350,8 +373,8 @@ if menu_choice == "🧪 Phòng Thử Nghiệm Kịch Bản (Scenario Lab)":
 # PAGE 2: GENERALIZATION BENCHMARK
 # =========================================================================
 elif menu_choice == "🌐 Điểm Chuẩn Tổng Quát Hóa (Generalization Benchmark)":
-    st.markdown('<div class="main-title">🌐 Điểm Chuẩn Tổng Quát Hóa Liên Miền (Domain Shift Benchmark)</div>', unsafe_allow_html=True)
-    st.markdown('<div class="sub-title">Đánh giá khả năng khái quát hóa của Double Q-Learning qua 4 trục miền và 3 chế độ chuyển giao nghiêm ngặt.</div>', unsafe_allow_html=True)
+    st.markdown('<h1 style="color: #38bdf8 !important; font-size: 2.15rem; font-weight: 800; margin-bottom: 0.35rem; letter-spacing: -0.3px;">🌐 Điểm Chuẩn Tổng Quát Hóa Liên Miền (Domain Shift Benchmark)</h1>', unsafe_allow_html=True)
+    st.markdown('<p style="color: #cbd5e1 !important; font-size: 1.05rem; margin-bottom: 1.3rem; font-weight: 400; line-height: 1.5;">Đánh giá khả năng khái quát hóa của Double Q-Learning qua 4 trục miền và 3 chế độ chuyển giao nghiêm ngặt.</p>', unsafe_allow_html=True)
 
     tab_shift, tab_base = st.tabs(["📊 Thử Nghiệm 3 Chế Độ Chuyển Giao (Transfer Modes)", "⚖️ Bảng So Sánh Các Thuật Toán (Baselines)"])
 
@@ -402,8 +425,8 @@ elif menu_choice == "🌐 Điểm Chuẩn Tổng Quát Hóa (Generalization Benc
 # PAGE 3: TRANSITION MODELS
 # =========================================================================
 elif menu_choice == "🔬 Đánh Giá Mô Hình Truyền Nhiệt (Transition Models)":
-    st.markdown('<div class="main-title">🔬 Kiểm Chứng Độ Hợp Lệ Của Mô Hình Truyền Nhiệt (Transition Models)</div>', unsafe_allow_html=True)
-    st.markdown('<div class="sub-title">So sánh đối đầu giữa Mô hình Ngẫu nhiên (Random Forest) và Mô hình Vật lý Hộp xám (Grey-Box RC).</div>', unsafe_allow_html=True)
+    st.markdown('<h1 style="color: #38bdf8 !important; font-size: 2.15rem; font-weight: 800; margin-bottom: 0.35rem; letter-spacing: -0.3px;">🔬 Kiểm Chứng Độ Hợp Lệ Của Mô Hình Truyền Nhiệt (Transition Models)</h1>', unsafe_allow_html=True)
+    st.markdown('<p style="color: #cbd5e1 !important; font-size: 1.05rem; margin-bottom: 1.3rem; font-weight: 400; line-height: 1.5;">So sánh đối đầu giữa Mô hình Ngẫu nhiên (Random Forest) và Mô hình Vật lý Hộp xám (Grey-Box RC).</p>', unsafe_allow_html=True)
 
     trans_csv = project_root / "result" / "log" / "transition_model_benchmark.csv"
     if trans_csv.exists():
@@ -429,8 +452,8 @@ elif menu_choice == "🔬 Đánh Giá Mô Hình Truyền Nhiệt (Transition Mod
 # PAGE 4: SAFETY & ROBUSTNESS
 # =========================================================================
 elif menu_choice == "🛡️ Thử Nghiệm Độ Bền Vững & Cổng An Toàn (Safety & Robustness)":
-    st.markdown('<div class="main-title">🛡️ Thử Nghiệm Độ Bền Vững Môi Trường & Cổng An Toàn</div>', unsafe_allow_html=True)
-    st.markdown('<div class="sub-title">Kiểm tra khả năng chịu lỗi của bộ điều khiển trước 7 kịch bản xáo trộn hệ thống và biến đổi khí hậu.</div>', unsafe_allow_html=True)
+    st.markdown('<h1 style="color: #38bdf8 !important; font-size: 2.15rem; font-weight: 800; margin-bottom: 0.35rem; letter-spacing: -0.3px;">🛡️ Thử Nghiệm Độ Bền Vững Môi Trường & Cổng An Toàn</h1>', unsafe_allow_html=True)
+    st.markdown('<p style="color: #cbd5e1 !important; font-size: 1.05rem; margin-bottom: 1.3rem; font-weight: 400; line-height: 1.5;">Kiểm tra khả năng chịu lỗi của bộ điều khiển trước 7 kịch bản xáo trộn hệ thống và biến đổi khí hậu.</p>', unsafe_allow_html=True)
 
     rob_csv = project_root / "result" / "log" / "robustness_benchmark.csv"
     if rob_csv.exists():
@@ -450,8 +473,8 @@ elif menu_choice == "🛡️ Thử Nghiệm Độ Bền Vững & Cổng An Toàn
 # PAGE 5: DATA PROVENANCE
 # =========================================================================
 elif menu_choice == "📑 Bảng Truy Xuất Nguồn Gốc (Data Provenance)":
-    st.markdown('<div class="main-title">📑 Bảng Đăng Ký Truy Xuất Nguồn Gốc Dữ Liệu (Data Provenance Registry)</div>', unsafe_allow_html=True)
-    st.markdown('<div class="sub-title">Phân định rõ ràng giữa dữ liệu đo đạc thực tế, tham số hiệu chuẩn, dữ liệu ngoại cảnh và giả định mô phỏng.</div>', unsafe_allow_html=True)
+    st.markdown('<h1 style="color: #38bdf8 !important; font-size: 2.15rem; font-weight: 800; margin-bottom: 0.35rem; letter-spacing: -0.3px;">📑 Bảng Đăng Ký Truy Xuất Nguồn Gốc Dữ Liệu (Data Provenance Registry)</h1>', unsafe_allow_html=True)
+    st.markdown('<p style="color: #cbd5e1 !important; font-size: 1.05rem; margin-bottom: 1.3rem; font-weight: 400; line-height: 1.5;">Phân định rõ ràng giữa dữ liệu đo đạc thực tế, tham số hiệu chuẩn, dữ liệu ngoại cảnh và giả định mô phỏng.</p>', unsafe_allow_html=True)
 
     prov_list = []
     for k, p in SYSTEM_PROVENANCE_REGISTRY.items():

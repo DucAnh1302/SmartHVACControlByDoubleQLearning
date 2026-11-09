@@ -4,7 +4,7 @@
 
 ---
 
-## MỤC LỤC 20 CHƯƠNG TOÀN DIỆN
+## MỤC LỤC 21 CHƯƠNG TOÀN DIỆN
 1. [Thông Tin Chung & Mục Tiêu Cốt Lõi Phi Thỏa Hiệp](#1-thông-tin-chung--mục-tiêu-cốt-lõi-phi-thỏa-hiệp)
 2. [Nguyên Tắc Bảo Toàn Mã Nguồn & Tôn Trọng Kế Thừa](#2-nguyên-tắc-bảo-toàn-mã-nguồn--tôn-trọng-kế-thừa)
 3. [Hiện Thực Khoa Học & Phân Tích Giới Hạn Dữ Liệu CU-BEMS](#3-hiện-thực-khoa-học--phân-tích-giới-hạn-dữ-liệu-cu-bems)
@@ -25,6 +25,7 @@
 18. [Bộ Kiểm Thử Tự Động Hóa Toàn Diện (Pytest Suite 32/32 Tests)](#18-bộ-kiểm-thử-tự-động-hóa-toàn-diện-pytest-suite-3232-tests)
 19. [Mức Độ Sẵn Sàng Triển Khai Thực Tế & Khuyến Cáo Kỹ Thuật](#19-mức-độ-sẵn-sàng-triển-khai-thực-tế--khuyến-cáo-kỹ-thuật)
 20. [Kết Luận Tổng Thể, Đóng Góp Học Thuật & Hướng Phát Triển](#20-kết-luận-tổng-thể-đóng-góp-học-thuật--hướng-phát-triển)
+21. [Những Điều Đồ Án Đã Chứng Minh Và Chưa Chứng Minh (Critical Academic Boundaries)](#21-những-điều-đồ-án-đã-chứng-minh-và-chưa-chứng-minh-critical-academic-boundaries)
 
 ---
 
@@ -350,3 +351,51 @@ Hệ thống định vị minh bạch năng lực theo khung 5 bậc:
 - Kết nối trạm thời tiết ngoài trời thực tế qua API Open-Meteo để thay thế mô hình dao động nhật triệt giả định.
 - Thử nghiệm chạy bóng (Shadow Mode) trên hệ thống BMS thực tế tại giảng đường hoặc văn phòng làm việc.
 - Mở rộng thuật toán sang học tăng cường không gian liên tục (PPO / SAC) kết hợp mạng nơ-ron vật lý Physics-Informed Neural Networks (PINN).
+
+---
+
+## 21. NHỮNG ĐIỀU ĐỒ ÁN ĐÃ CHỨNG MINH VÀ CHƯA CHỨNG MINH (CRITICAL ACADEMIC BOUNDARIES)
+
+Để đảm bảo tính trung thực khoa học tuyệt đối trước hội đồng giảng viên và các nhà nghiên cứu, chương này phân định rạch ròi giữa những kết quả nghiên cứu **ĐÃ CHỨNG MINH CÓ BẰNG CHỨNG THỰC NGHIỆM** và những giới hạn kỹ thuật **CHƯA CHỨNG MINH HOẶC CHƯA THỂ TRIỂN KHAI TRÊN THỰC ĐỊA**:
+
+### 21.1 Những điều đồ án ĐÃ CHỨNG MINH (Demonstrated & Empirically Validated)
+
+1. **Khắc phục hiện tượng thổi phồng giá trị (Overestimation Bias)**:
+   - *Bằng chứng*: So sánh trực tiếp trên 10 hạt giống ngẫu nhiên (`42, 101, 202, 303, 404, 505, 606, 707, 808, 909`) giữa Target Double Q-Learning và Single Q-Learning baseline trên cùng không gian 600 trạng thái.
+   - *Kết quả*: Bảng Q kép của Double Q-Learning luôn triệt tiêu thành công độ lệch cực đại Max Q ($Q_{max}$ trung bình ổn định ở mức hợp lý, không bị phân kỳ giả tạo như Single Q-Learning).
+
+2. **Tính hợp lệ vật lý và ưu thế tổng quát hóa của mô hình Hộp xám RC**:
+   - *Bằng chứng*: Kiểm định đối đầu (Head-to-head benchmark) giữa mô hình hộp xám 1st-order RC với mô hình Black-box Random Forest trên miền năm 2018 và miền ngoại suy năm 2019.
+   - *Kết quả*: Mô hình Hộp xám vượt qua 100% (6/6) bài kiểm tra tính nhất quán nhiệt động lực học (PASS Monotonicity), duy trì sai số ổn định $0.602^\circ\text{C}$ MAE trên năm 2019. Ngược lại, Random Forest thất bại ở kiểm tra vật lý và sai số bùng nổ lên $1.425^\circ\text{C}$ MAE.
+
+3. **Cơ chế chuyển giao chi phí thấp (Calibration-Only & Fine-Tuning Transferability)**:
+   - *Bằng chứng*: Kiểm nghiệm trên 4 trục chuyển dịch miền dữ liệu (thời gian, năm, phòng, tầng) theo cơ chế phân vùng 3 pha chống rò rỉ (20% Calib, 40% Adapt, 40% Test).
+   - *Kết quả*: Chuyển giao Zero-Shot bị sụt giảm nghiêm trọng do trôi đặc tính thiết bị. Chỉ cần 5 giây chạy K-Means tái hiệu chuẩn công suất thiết bị (0 episode huấn luyện lại), hiệu năng phục hồi từ $48\%$ đến $60\%$. Thích nghi cục bộ (Fine-tuning) với ngân sách nhỏ (10-25 episodes) đưa vi phạm nghiêm trọng về dưới $2.3\%$.
+
+4. **Hiệu quả tiết kiệm năng lượng trong mô phỏng số có kiểm soát**:
+   - *Bằng chứng*: Trong môi trường mô phỏng vật lý có hiệu chuẩn thực nghiệm, Agent đạt mức tiêu thụ $202.93\text{ kWh/ngày}$, tiết kiệm **$42.40\%$** điện năng so với chiến lược chạy cố định 25°C ($352.28\text{ kWh/ngày}$) và giảm **$53.8\%$** so với bộ điều khiển Thermostat thông thường.
+
+5. **Cổng an toàn xác định (Safety Gateway) và bảo vệ cơ điện**:
+   - *Bằng chứng*: Vượt qua 32/32 bài kiểm thử tự động, Cổng an toàn khống chế 100% các hành vi nguy hiểm: khóa máy nén tối thiểu 2 bước (2 giờ) chống hỏng hóc ngắn hạn, ép hạ nhiệt khi phòng vượt $29.5^\circ\text{C}$, ép tắt điều hòa khi phòng dưới $18.0^\circ\text{C}$, và kích hoạt chế độ Fail-safe an toàn khi cảm biến gặp sự cố (NaN hoặc ngoài khoảng $[10, 45]^\circ\text{C}$).
+
+---
+
+### 21.2 Những điều đồ án CHƯA CHỨNG MINH (Honest Limitations & Unproved Claims)
+
+1. **CHƯA chứng minh khả năng tiết kiệm điện $42\%$ trên phần cứng tòa nhà thực tế**:
+   - *Hiện thực*: Con số $42.40\%$ là kết quả tính toán mô phỏng trên chuỗi thời gian (Simulated Grey-Box RC model). Đồ án **chưa từng gửi tín hiệu điều khiển trực tiếp đến các Chiller, AHU hay máy nén cơ điện thực tế** tại Đại học Chulalongkorn. Hiệu quả tiết kiệm thực tế có thể thay đổi tùy thuộc vào hệ số COP thực tế, độ trễ trao đổi nhiệt của đường ống nước lạnh và sai số khí động học.
+
+2. **CHƯA chứng minh Double Q-Learning vượt trội áp đảo Single Q-Learning ở mức ý nghĩa thống kê $p < 0.05$ trên bảng Q rời rạc**:
+   - *Hiện thực*: Kiểm định thống kê cặp (Paired t-test và Wilcoxon) trên 10 seeds cho thấy trong không gian trạng thái rời rạc 600 ô, cả hai giải thuật đều tìm được các chính sách gần tối ưu tương đương nhau. Double Q-Learning loại bỏ thổi phồng giá trị, nhưng không tạo ra bước nhảy vọt thần kỳ về tổng Reward hay lượng điện tiết kiệm so với Single Q-Learning được tinh chỉnh kỹ.
+
+3. **CHƯA đo đạc trực tiếp trạng thái đóng/mở cửa sổ thực tế**:
+   - *Hiện thực*: Bộ dữ liệu CU-BEMS nguyên bản của Clayton Miller không lắp đặt cảm biến công tắc từ hay cảm biến góc mở cửa sổ. Hành động mở cửa sổ (`WINDOW_OPEN`) và trạng thái cửa sổ hoàn toàn là giả định mô phỏng (`SIMULATED_ASSUMED`) dựa trên tiêu chuẩn thông gió tự nhiên ASHRAE 55 và ASHRAE 62.1.
+
+4. **CHƯA đo đạc trạm thời tiết ngoài trời tại khuôn viên công trình**:
+   - *Hiện thực*: Do bộ dữ liệu thiếu kênh thời tiết ngoài trời cục bộ, chuỗi nhiệt độ và độ ẩm môi trường xung quanh được tạo ra từ mô hình toán học vi khí hậu nhiệt đới Bangkok. Đây là biến số ngoại suy (`SIMULATED_ASSUMED`), không phải dữ liệu trạm khí tượng tại chỗ (`OBSERVED`).
+
+5. **CHƯA chứng minh độ tin cậy tuyệt đối của tham số nhiệt nội bộ $k_{int}$**:
+   - *Hiện thực*: Do dữ liệu đo đạc ổ cắm điện (`Plug(kW)`) trong bộ dữ liệu CU-BEMS có độ dao động rất thấp trong giờ làm việc (gần như đi ngang), thuật toán định danh OLS có xu hướng chạm biên dưới ($0.0100$). Biến số này được gắn nhãn `FITTED_AT_BOUNDARY_CAVEAT`, cần được kích thích thêm bằng dữ liệu cảm biến đếm người (Occupancy counter) trong các nghiên cứu tiếp theo.
+
+6. **Mức độ sẵn sàng triển khai dừng lại ở Bậc nghiên cứu mô phỏng (`RESEARCH_SIMULATION_ONLY`) và kiểm định ngoại tuyến (`OFFLINE_VALIDATED`)**:
+   - *Hiện thực*: Giao thức kết nối BACnet/Modbus mới dừng lại ở tầng mô phỏng phần mềm (`MockBMSControllerHIL`). Hệ thống tuyệt đối chưa sẵn sàng để giao quyền điều khiển tự động hoàn toàn cho phần cứng nếu thiếu rơ-le nhiệt cơ học bảo vệ và sự giám sát trực tiếp của kỹ sư vận hành tòa nhà.
