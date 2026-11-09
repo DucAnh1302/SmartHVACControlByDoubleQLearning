@@ -1,0 +1,13 @@
+Source Domain,Target Domain,Transfer Mode,Benchmark Type,Mean Reward,Comfort Violation (%),Severe Violation (%),Energy (kWh/day),Mean Temp (°C),Temp Std (°C),Safety Overrides (%),Budget / Protocol
+2018_F2_Z1,2018_F2_Z1,ZERO-SHOT,Temporal Test (Unseen Period),-111.47,72.5,13.75,276.92,26.44,2.25,19.79,"Frozen Q-table, source equipment calibration (0% target budget)"
+2018_F2_Z1,2018_F2_Z1,CALIBRATION-ONLY,Temporal Test (Unseen Period),-111.55,72.71,13.75,276.1,26.44,2.25,18.96,"Frozen Q-table, target equipment calibrated (0 training episodes on target)"
+2018_F2_Z1,2018_F2_Z1,FINE-TUNING,Temporal Test (Unseen Period),-88.74,70.21,19.58,265.34,26.6,2.11,17.5,Fine-tuned with 25 episodes on target data
+2018_F2_Z1,2019_F2_Z1,ZERO-SHOT,Cross-Domain: 2019_F2_Z1,-118.93,69.17,17.08,249.42,26.63,2.3,20.83,"Frozen Q-table, source equipment calibration (0% target budget)"
+2018_F2_Z1,2019_F2_Z1,CALIBRATION-ONLY,Cross-Domain: 2019_F2_Z1,-104.07,70.0,14.37,256.67,26.56,2.13,19.58,"Frozen Q-table, target equipment calibrated (0 training episodes on target)"
+2018_F2_Z1,2019_F2_Z1,FINE-TUNING,Cross-Domain: 2019_F2_Z1,-60.44,70.42,5.21,276.17,26.23,1.97,15.62,Fine-tuned with 25 episodes on target data
+2018_F2_Z1,2018_F2_Z2,ZERO-SHOT,Cross-Domain: 2018_F2_Z2,-48.32,72.71,3.54,204.12,26.23,1.85,19.79,"Frozen Q-table, source equipment calibration (0% target budget)"
+2018_F2_Z1,2018_F2_Z2,CALIBRATION-ONLY,Cross-Domain: 2018_F2_Z2,-50.55,72.92,4.58,189.92,26.33,1.9,18.75,"Frozen Q-table, target equipment calibrated (0 training episodes on target)"
+2018_F2_Z1,2018_F2_Z2,FINE-TUNING,Cross-Domain: 2018_F2_Z2,-44.97,70.42,2.92,224.59,26.1,1.73,12.29,Fine-tuned with 25 episodes on target data
+2018_F2_Z1,2018_F3_Z1,ZERO-SHOT,Cross-Domain: 2018_F3_Z1,-75.75,74.17,7.92,259.9,26.3,2.08,20.62,"Frozen Q-table, source equipment calibration (0% target budget)"
+2018_F2_Z1,2018_F3_Z1,CALIBRATION-ONLY,Cross-Domain: 2018_F3_Z1,-88.49,74.17,13.12,224.97,26.46,2.2,23.54,"Frozen Q-table, target equipment calibrated (0 training episodes on target)"
+2018_F2_Z1,2018_F3_Z1,FINE-TUNING,Cross-Domain: 2018_F3_Z1,-55.99,72.08,6.04,216.53,26.3,1.9,28.33,Fine-tuned with 25 episodes on target data

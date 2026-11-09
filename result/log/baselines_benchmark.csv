@@ -1,0 +1,7 @@
+Policy,Mean Reward,Comfort Violation (%),Severe Violation (%),Daily Energy (kWh),Mean Temp (°C),Temp Std (°C),Safety Overrides (%),Action 0 (SET_25 %),Action 1 (SET_23 %),Action 2 (SET_27 %),Action 3 (AC_OFF %),Action 4 (WIN_OPEN %)
+Random Policy,-151.64,76.81,20.83,308.67,26.52,2.67,35.14,21.2,29.6,20.0,20.6,8.6
+Fixed Setpoint (25°C),-60.7,71.67,3.47,368.26,25.79,1.89,0.0,100.0,0.0,0.0,0.0,0.0
+Comfort-First Policy,-57.37,67.64,0.14,459.65,25.17,1.82,0.0,33.5,66.5,0.0,0.0,0.0
+Energy-Saving Policy,-75.52,73.19,18.89,239.45,26.67,2.09,11.39,24.9,4.7,17.5,52.9,0.0
+Target DQL (Improved 600s),-103.17,71.53,13.89,290.26,26.5,2.18,20.69,21.5,20.0,28.5,25.7,4.3
+Legacy DQL (45s Adapted),-73.7,76.53,6.25,427.13,25.39,2.32,1.81,7.1,65.8,7.4,19.7,0.0

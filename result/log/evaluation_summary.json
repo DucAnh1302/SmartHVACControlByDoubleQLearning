@@ -1,0 +1,44 @@
+[
+  {
+    "Model": "Rule-Based",
+    "Total Reward": -93.44383693337795,
+    "Comfort Violation (%)": 56.41666666666666,
+    "Total Energy (kWh)": 459.84,
+    "Energy Savings (%)": 0.0,
+    "Average Temp (\u00b0C)": 25.03187059409672,
+    "Temp Std (\u00b0C)": 1.488716390435816,
+    "Reward Std": 52.40576939023078,
+    "Action 0 (%)": 32.666666666666664,
+    "Action 1 (%)": 9.0,
+    "Action 2 (%)": 24.416666666666668,
+    "Action 3 (%)": 33.916666666666664
+  },
+  {
+    "Model": "Q-Learning",
+    "Total Reward": -92.3084946267629,
+    "Comfort Violation (%)": 67.99999999999999,
+    "Total Energy (kWh)": 423.88,
+    "Energy Savings (%)": 7.82,
+    "Average Temp (\u00b0C)": 25.316070674820374,
+    "Temp Std (\u00b0C)": 1.4043834761609408,
+    "Reward Std": 44.31778092649513,
+    "Action 0 (%)": 41.41666666666667,
+    "Action 1 (%)": 11.0,
+    "Action 2 (%)": 9.5,
+    "Action 3 (%)": 38.083333333333336
+  },
+  {
+    "Model": "Double Q-Learning",
+    "Total Reward": -86.17121924680154,
+    "Comfort Violation (%)": 59.75000000000001,
+    "Total Energy (kWh)": 606.32,
+    "Energy Savings (%)": -31.85,
+    "Average Temp (\u00b0C)": 24.121549136772373,
+    "Temp Std (\u00b0C)": 2.094245340656165,
+    "Reward Std": 46.16820202934378,
+    "Action 0 (%)": 25.333333333333336,
+    "Action 1 (%)": 5.25,
+    "Action 2 (%)": 10.25,
+    "Action 3 (%)": 59.166666666666664
+  }
+]

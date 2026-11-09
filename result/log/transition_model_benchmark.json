@@ -1,0 +1,113 @@
+{
+  "Persistence Baseline": {
+    "single_step": {
+      "temp_mae": 0.3922,
+      "temp_rmse": 0.8227,
+      "temp_r2": 0.8172,
+      "rh_mae": 0.8533,
+      "rh_rmse": 1.4417,
+      "rh_r2": 0.7985
+    },
+    "rollout_6h": {
+      "rollout_mae_6h": 0.6682,
+      "rollout_rmse_6h": 1.2239,
+      "rollout_rh_mae_6h": 1.2062
+    },
+    "rollout_24h": {
+      "rollout_mae_24h": 1.7454,
+      "rollout_rmse_24h": 2.4355,
+      "rollout_rh_mae_24h": 2.4265
+    },
+    "physics_checks": {
+      "cooling_monotonic": true,
+      "heat_gain_monotonic": true,
+      "ambient_transfer_monotonic": true,
+      "extreme_bounded": true,
+      "physical_consistency_passed": true,
+      "cooling_trajectory_samples": [
+        25.0,
+        25.0,
+        25.0,
+        25.0
+      ]
+    },
+    "cross_domain": {
+      "cross_domain_temp_mae": 0.4523,
+      "cross_domain_temp_rmse": 0.9616
+    }
+  },
+  "Random Forest (Legacy)": {
+    "single_step": {
+      "temp_mae": 0.257,
+      "temp_rmse": 0.4063,
+      "temp_r2": 0.9554,
+      "rh_mae": 0.8411,
+      "rh_rmse": 1.304,
+      "rh_r2": 0.8352
+    },
+    "rollout_6h": {
+      "rollout_mae_6h": 0.5076,
+      "rollout_rmse_6h": 0.8483,
+      "rollout_rh_mae_6h": 0.992
+    },
+    "rollout_24h": {
+      "rollout_mae_24h": 0.5241,
+      "rollout_rmse_24h": 0.8108,
+      "rollout_rh_mae_24h": 2.214
+    },
+    "physics_checks": {
+      "cooling_monotonic": true,
+      "heat_gain_monotonic": false,
+      "ambient_transfer_monotonic": true,
+      "extreme_bounded": true,
+      "physical_consistency_passed": false,
+      "cooling_trajectory_samples": [
+        26.75,
+        24.73,
+        24.01,
+        23.33
+      ]
+    },
+    "cross_domain": {
+      "cross_domain_temp_mae": 1.4252,
+      "cross_domain_temp_rmse": 1.8122
+    }
+  },
+  "Grey-Box RC Model": {
+    "single_step": {
+      "temp_mae": 0.549,
+      "temp_rmse": 0.8257,
+      "temp_r2": 0.8159,
+      "rh_mae": 1.6117,
+      "rh_rmse": 2.1201,
+      "rh_r2": 0.5644
+    },
+    "rollout_6h": {
+      "rollout_mae_6h": 1.2219,
+      "rollout_rmse_6h": 1.4693,
+      "rollout_rh_mae_6h": 3.8877
+    },
+    "rollout_24h": {
+      "rollout_mae_24h": 1.9036,
+      "rollout_rmse_24h": 2.2642,
+      "rollout_rh_mae_24h": 4.5279
+    },
+    "physics_checks": {
+      "cooling_monotonic": true,
+      "heat_gain_monotonic": true,
+      "ambient_transfer_monotonic": true,
+      "extreme_bounded": true,
+      "physical_consistency_passed": true,
+      "cooling_trajectory_samples": [
+        25.44,
+        25.39,
+        25.07,
+        25.01
+      ]
+    },
+    "cross_domain": {
+      "cross_domain_temp_mae": 0.6027,
+      "cross_domain_temp_rmse": 0.9546
+    }
+  }
+}

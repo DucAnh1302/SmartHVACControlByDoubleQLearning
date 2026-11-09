@@ -1,0 +1,24 @@
+{
+  "domain_id": "2018_F3_Z1",
+  "year": 2018,
+  "floor": 2,
+  "zone": "z1",
+  "off_power_kw": 0.0,
+  "low_power_kw": 9.42,
+  "med_power_kw": 21.86,
+  "high_power_kw": 27.16,
+  "off_frequency": 0.7415,
+  "total_samples": 1768,
+  "active_samples": 457,
+  "cluster_centers": [
+    9.42,
+    21.86,
+    27.16
+  ],
+  "cluster_boundaries": [
+    15.64,
+    24.51
+  ],
+  "inertia": 1700.62,
+  "provenance": "FITTED_WITH_CAVEAT"
+}
