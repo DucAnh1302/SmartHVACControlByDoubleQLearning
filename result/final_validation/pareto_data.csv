@@ -1,6 +1,6 @@
 preference_profile,controller,mean_reward,daily_energy_kwh,comfort_violation_pct,severe_violation_pct,switching_events,w_comfort,w_energy
 comfort_priority,Target Double Q-Learning,-42.02,219.12,65.0,2.29,7.5,2.0,0.03
-comfort_priority,Single Q-Learning Baseline,-39.27,219.76,59.17,1.25,8.3,2.0,0.03
+comfort_priority,Single Q-Learning Baseline,-41.16,201.57,59.58,1.67,7.5,2.0,0.03
 comfort_priority,Fixed Setpoint (25°C),-20.24,365.45,47.29,0.0,0.0,2.0,0.03
 comfort_priority,Rule-Based Thermostat,-19.18,457.72,40.21,0.0,2.9,2.0,0.03
 comfort_priority,Comfort-First Policy,-20.88,516.47,53.75,0.0,3.1,2.0,0.03
@@ -8,7 +8,7 @@ comfort_priority,Energy-Saving Policy,-42.19,165.45,65.0,0.0,3.2,2.0,0.03
 comfort_priority,AC-Always-Off Baseline,-76.01,66.66,68.54,11.25,1.9,2.0,0.03
 comfort_priority,Random Policy,-103.67,304.39,56.67,11.88,12.7,2.0,0.03
 balanced,Target Double Q-Learning,-37.12,215.02,62.5,2.5,7.8,1.0,0.08
-balanced,Single Q-Learning Baseline,-36.92,227.98,58.54,0.83,7.6,1.0,0.08
+balanced,Single Q-Learning Baseline,-35.94,205.15,62.5,0.83,7.0,1.0,0.08
 balanced,Fixed Setpoint (25°C),-34.54,377.43,44.79,0.0,0.0,1.0,0.08
 balanced,Rule-Based Thermostat,-40.42,462.33,42.92,0.0,3.0,1.0,0.08
 balanced,Comfort-First Policy,-44.83,508.89,50.42,0.0,2.9,1.0,0.08
@@ -16,7 +16,7 @@ balanced,Energy-Saving Policy,-29.13,159.42,62.71,0.0,3.1,1.0,0.08
 balanced,AC-Always-Off Baseline,-46.3,51.3,68.54,11.88,1.5,1.0,0.08
 balanced,Random Policy,-110.08,311.96,58.33,17.29,12.5,1.0,0.08
 energy_priority,Target Double Q-Learning,-53.62,216.55,60.42,1.46,7.3,0.5,0.18
-energy_priority,Single Q-Learning Baseline,-54.87,214.6,59.79,0.62,7.9,0.5,0.18
+energy_priority,Single Q-Learning Baseline,-47.12,186.95,60.62,0.21,7.2,0.5,0.18
 energy_priority,Fixed Setpoint (25°C),-72.17,370.39,46.25,0.0,0.0,0.5,0.18
 energy_priority,Rule-Based Thermostat,-89.23,454.48,39.17,0.0,2.9,0.5,0.18
 energy_priority,Comfort-First Policy,-101.31,512.18,51.25,0.0,3.1,0.5,0.18

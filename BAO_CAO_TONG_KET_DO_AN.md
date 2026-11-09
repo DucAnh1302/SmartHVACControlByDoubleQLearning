@@ -22,7 +22,7 @@
 15. [Cổng An Toàn Độc Lập (Safety Gateway) & Giao Thức BMS HIL](#15-cổng-an-toàn-độc-lập-safety-gateway--giao-thức-bms-hil)
 16. [Bảng Truy Xuất Nguồn Gốc Dữ Liệu Minh Bạch (Data Provenance)](#16-bảng-truy-xuất-nguồn-gốc-dữ-liệu-minh-bạch-data-provenance)
 17. [Phòng Thử Nghiệm Tương Tác Streamlit (Scenario Lab)](#17-phòng-thử-nghiệm-tương-tác-streamlit-scenario-lab)
-18. [Bộ Kiểm Thử Tự Động Hóa Toàn Diện (Pytest Suite 32/32 Tests)](#18-bộ-kiểm-thử-tự-động-hóa-toàn-diện-pytest-suite-3232-tests)
+18. [Bộ Kiểm Thử Tự Động Hóa Toàn Diện (Pytest Suite 43/43 Tests)](#18-bộ-kiểm-thử-tự-động-hóa-toàn-diện-pytest-suite-4343-tests)
 19. [Mức Độ Sẵn Sàng Triển Khai Thực Tế & Khuyến Cáo Kỹ Thuật](#19-mức-độ-sẵn-sàng-triển-khai-thực-tế--khuyến-cáo-kỹ-thuật)
 20. [Kết Luận Tổng Thể, Đóng Góp Học Thuật & Hướng Phát Triển](#20-kết-luận-tổng-thể-đóng-góp-học-thuật--hướng-phát-triển)
 21. [Những Điều Đồ Án Đã Chứng Minh Và Chưa Chứng Minh (Critical Academic Boundaries)](#21-những-điều-đồ-án-đã-chứng-minh-và-chưa-chứng-minh-critical-academic-boundaries)
@@ -313,9 +313,9 @@ Giao diện đồ họa nghiên cứu tại `app/app.py` được tối ưu hóa
 
 ---
 
-## 18. BỘ KIỂM THỬ TỰ ĐỘNG HÓA TOÀN DIỆN (PYTEST SUITE 32/32 TESTS)
+## 18. BỘ KIỂM THỬ TỰ ĐỘNG HÓA TOÀN DIỆN (PYTEST SUITE 43/43 TESTS)
 
-Toàn bộ hệ thống vượt qua **32/32 bài kiểm thử tự động với tỷ lệ ĐẠT 100%**:
+Toàn bộ hệ thống vượt qua **43/43 bài kiểm thử tự động với tỷ lệ ĐẠT 100%**:
 1. `tests/test_data_leakage.py` (5 tests): Xác minh phân chia chuỗi thời gian đơn điệu, phân chia 3 pha không rò rỉ (Calib < Adapt < Test), kiểm thử bẫy rò rỉ dữ liệu cố ý, và kiểm tra cơ chế nội suy giới hạn $\le 3$ giờ có kèm mặt nạ chất lượng.
 2. `tests/test_physical_consistency.py` (6 tests): Kiểm tra tính đơn điệu làm lạnh, tính đơn điệu tải nhiệt nội bộ, truyền nhiệt vỏ bao che, ghép cặp nhiệt động học nhiệt-ẩm, khống chế biên an toàn $[16, 38]^\circ\text{C}$, và từ chối khớp mô hình khi số lượng mẫu $< 50$.
 3. `tests/test_target_dql.py` (7 tests): Kiểm định không gian 600 trạng thái, bảng Q kép ($600 \times 5$), quy tắc cập nhật Double Q, suy giảm $\epsilon$, ma trận số lần thăm $N(s, a)$, và phản ánh chính xác cấu hình tham số vật lý trong môi trường (`get_model_config()`).
@@ -329,7 +329,7 @@ Toàn bộ hệ thống vượt qua **32/32 bài kiểm thử tự động với
 
 Hệ thống định vị minh bạch năng lực theo khung 5 bậc:
 - **Bậc 1: `RESEARCH_SIMULATION_ONLY`** (Trạng thái hiện tại).
-- **Bậc 2: `OFFLINE_VALIDATED`** (ĐÃ HOÀN THÀNH: Vượt qua 32/32 test tự động, kiểm định tính hợp lệ vật lý, không rò rỉ dữ liệu).
+- **Bậc 2: `OFFLINE_VALIDATED`** (ĐÃ HOÀN THÀNH: Vượt qua 43/43 test tự động, kiểm định tính hợp lệ vật lý, không rò rỉ dữ liệu).
 - **Bậc 3: `HARDWARE_IN_LOOP_VALIDATED`** (ĐÃ KẾT NỐI: Giả lập giao tiếp BACnet/Modbus qua `MockBMSControllerHIL`).
 - **Bậc 4: `SHADOW_MODE_VALIDATED`** (Chạy song song quan sát khuyến nghị mà không can thiệp thiết bị vật lý).
 - **Bậc 5: `DEPLOYMENT_CANDIDATE`** (Chỉ được phép khi có kỹ sư cơ điện PE phê duyệt và rơ-le phần cứng bảo vệ).
@@ -376,7 +376,7 @@ Hệ thống định vị minh bạch năng lực theo khung 5 bậc:
    - *Bằng chứng*: Trong môi trường mô phỏng vật lý có hiệu chuẩn thực nghiệm, Agent đạt mức tiêu thụ $202.93\text{ kWh/ngày}$, tiết kiệm **$42.40\%$** điện năng so với chiến lược chạy cố định 25°C ($352.28\text{ kWh/ngày}$) và giảm **$53.8\%$** so với bộ điều khiển Thermostat thông thường.
 
 5. **Cổng an toàn xác định (Safety Gateway) và bảo vệ cơ điện**:
-   - *Bằng chứng*: Vượt qua 32/32 bài kiểm thử tự động, Cổng an toàn khống chế 100% các hành vi nguy hiểm: khóa máy nén tối thiểu 2 bước (2 giờ) chống hỏng hóc ngắn hạn, ép hạ nhiệt khi phòng vượt $29.5^\circ\text{C}$, ép tắt điều hòa khi phòng dưới $18.0^\circ\text{C}$, và kích hoạt chế độ Fail-safe an toàn khi cảm biến gặp sự cố (NaN hoặc ngoài khoảng $[10, 45]^\circ\text{C}$).
+   - *Bằng chứng*: Vượt qua 43/43 bài kiểm thử tự động, Cổng an toàn khống chế 100% các hành vi nguy hiểm: khóa máy nén tối thiểu 2 bước (2 giờ) chống hỏng hóc ngắn hạn, ép hạ nhiệt khi phòng vượt $29.5^\circ\text{C}$, ép tắt điều hòa khi phòng dưới $18.0^\circ\text{C}$, và kích hoạt chế độ Fail-safe an toàn khi cảm biến gặp sự cố (NaN hoặc ngoài khoảng $[10, 45]^\circ\text{C}$).
 
 ---
 

@@ -23,7 +23,8 @@
         0.0613,
         0.0875
       ],
-      "identifiability_status": "IDENTIFIED"
+      "identifiability_status": "IDENTIFIED",
+      "note": "Ambient heat infiltration conductance per building thermal mass. Strictly positive and identified."
     },
     "k_int": {
       "estimate": 0.01,
@@ -32,7 +33,8 @@
         -0.0151,
         0.0351
       ],
-      "identifiability_status": "IDENTIFIED"
+      "identifiability_status": "FITTED_AT_BOUNDARY_AND_CI_INCLUDES_NON_POSITIVE",
+      "note": "Internal heat gain coefficient. Estimated at lower bound (0.0100) and unconstrained 95% CI includes non-positive values due to low daytime plug telemetry excitation variance."
     },
     "k_ac": {
       "estimate": 0.013,
@@ -41,23 +43,36 @@
         0.0016,
         0.0244
       ],
-      "identifiability_status": "IDENTIFIED"
+      "identifiability_status": "IDENTIFIED",
+      "note": "Direct HVAC cooling temperature reduction rate. Statistically distinct from zero."
     },
     "h_env": {
       "estimate": 0.02,
-      "identifiability_status": "IDENTIFIED_WITH_HIGH_VARIANCE"
+      "std_error": null,
+      "ci_95": null,
+      "identifiability_status": "FITTED_POINT_ESTIMATE_HIGH_RESIDUAL_VARIANCE",
+      "note": "Moisture infiltration rate fitted via stage-2 OLS on latent moisture balance. Analytic standard error unavailable; residual variance is high due to lack of direct latent enthalpy sensors."
     },
     "h_T": {
       "estimate": -2.35,
-      "identifiability_status": "THERMODYNAMIC_PHYSICAL_CONSTANT"
+      "std_error": null,
+      "ci_95": null,
+      "identifiability_status": "EMPIRICAL_PSYCHROMETRIC_APPROXIMATION",
+      "note": "Empirical linear approximation of Clausius-Clapeyron saturation vapor pressure curve around 24-26\u00b0C (-2.35 %RH/\u00b0C), not a universal thermodynamic constant."
     },
     "h_ac": {
       "estimate": 0.05,
-      "identifiability_status": "IDENTIFIED"
+      "std_error": null,
+      "ci_95": null,
+      "identifiability_status": "FITTED_POINT_ESTIMATE",
+      "note": "Active cooling dehumidification rate fitted via stage-2 moisture balance. Analytic standard error unavailable."
     },
     "k_win": {
       "estimate": 0.45,
-      "identifiability_status": "SIMULATED_ASSUMED_NO_DATA",
+      "std_error": null,
+      "ci_95": null,
+      "identifiability_status": "NOT_IDENTIFIABLE_FROM_AVAILABLE_DATA",
+      "note": "No window state telemetry in CU-BEMS dataset. Assumed based on ASHRAE natural ventilation literature.",
       "sensitivity_range": [
         0.2,
         0.7
@@ -65,7 +80,10 @@
     },
     "h_win": {
       "estimate": 0.5,
-      "identifiability_status": "SIMULATED_ASSUMED_NO_DATA",
+      "std_error": null,
+      "ci_95": null,
+      "identifiability_status": "NOT_IDENTIFIABLE_FROM_AVAILABLE_DATA",
+      "note": "No window state telemetry in CU-BEMS dataset. Assumed based on ASHRAE natural ventilation literature.",
       "sensitivity_range": [
         0.25,
         0.75

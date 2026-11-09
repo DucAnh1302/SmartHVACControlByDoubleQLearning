@@ -3,7 +3,7 @@
 
 - **Ngày cập nhật**: 2026-11-09T11:25:00+07:00
 - **Nhánh Git**: `feature/academic-delivery`
-- **Bộ kiểm thử tự động**: **40 / 40 Tests ĐẠT 100% (Pass Rate: 100%)**
+- **Bộ kiểm thử tự động**: **43 / 43 Tests ĐẠT 100% (Pass Rate: 100%)**
 - **Trạng thái sẵn sàng học thuật**: **HOÀN TẤT TOÀN DIỆN & TRUNG THỰC KHOA HỌC**
 
 ---
@@ -15,7 +15,7 @@
 | 1 | **Cô lập Episode & Reset Môi trường** | **ĐÃ HOÀN TẤT** | `src/environment/target_env.py` (`reset()` khôi phục `window_state=0`, `last_action=None`, `episode_energy=0`, `switching_count=0`; Bước 0 có chi phí chuyển đổi $= 0$). Unit tests: `tests/test_target_env_reset.py`. |
 | 2 | **Phân rã Hàm thưởng Đa mục tiêu có Dấu** | **ĐÃ HOÀN TẤT** | `src/reward/advanced_reward.py` phân rã thành $R_{total} = R_{comfort} + R_{safety} + R_{energy} + R_{switching} + R_{humidity}$. Hỗ trợ 3 cấu hình trọng số: `comfort_priority`, `balanced`, `energy_priority`. Unit tests: `tests/test_advanced_reward.py`. |
 | 3 | **Cổng An Toàn & Cấu hình Độc lập `SafetyConfig`** | **ĐÃ HOÀN TẤT** | `src/safety/safety_gateway.py` cấu hình `@dataclass(frozen=True) class SafetyConfig`. Tích hợp cơ chế Fail-Safe khi cảm biến hỏng/NaN. Unit tests: `tests/test_safety_gateway.py` (8/8 tests). |
-| 4 | **Định danh Tham số Hộp xám & Giới hạn Vật lý** | **ĐÃ HOÀN TẤT** | `src/environment/greybox_model.py` gắn nhãn trung thực `FITTED_AT_BOUNDARY_CAVEAT` cho $k_{int}$, `EMPIRICAL_PSYCHROMETRIC_APPROXIMATION` cho $h_T$, và `NOT_IDENTIFIABLE_FROM_AVAILABLE_DATA` cho tham số cửa sổ. |
+| 4 | **Định danh Tham số Hộp xám & Giới hạn Vật lý** | **ĐÃ HOÀN TẤT** | `src/environment/greybox_model.py` gắn nhãn trung thực `FITTED_AT_BOUNDARY_AND_CI_INCLUDES_NON_POSITIVE` cho $k_{int}$, `EMPIRICAL_PSYCHROMETRIC_APPROXIMATION` cho $h_T$, và `NOT_IDENTIFIABLE_FROM_AVAILABLE_DATA` cho tham số cửa sổ. |
 | 5 | **Đánh giá Đa hạt giống 10 Seeds (DQL vs Single Q)** | **ĐÃ HOÀN TẤT** | Pipeline `run_academic_validation.py` chạy 10 hạt giống (`42, 101, 202, 303, 404, 505, 606, 707, 808, 909`), tính Paired t-test, Wilcoxon, 95% CI, Cohen's d và lưu tại `result/final_validation/`. |
 | 6 | **Phân tích Đánh đổi Pareto & Độ nhạy Hàm thưởng** | **ĐÃ HOÀN TẤT** | Xuất đồ thị `pareto_tradeoff.png` (Năng lượng vs Vi phạm tiện nghi) và `reward_preference_sensitivity.png` đánh giá 6 bộ điều khiển trên 3 hồ sơ ưu tiên. |
 | 7 | **Giao diện Trực quan Streamlit Chuẩn Tương Phản** | **ĐÃ HOÀN TẤT** | `app/app.py` tối ưu hóa CSS inline với nền tối Dark Slate Card (`#1e293b`), chữ trắng sáng (`#f1f5f9`), huy hiệu Cyan/Vàng phát quang, bố cục 100% Full Width theo `[DIR-202611-002]`. |
@@ -60,7 +60,7 @@
 
 ---
 
-## 3. KẾT QUẢ KIỂM THỬ TỰ ĐỘNG (40/40 TESTS PASSED)
+## 3. KẾT QUẢ KIỂM THỬ TỰ ĐỘNG (43/43 TESTS PASSED)
 
 ```text
 tests/test_advanced_reward.py::test_signed_decomposition_identity PASSED
@@ -103,5 +103,8 @@ tests/test_target_dql.py::test_target_env_model_config_reflection PASSED
 tests/test_target_env_reset.py::test_reset_episode_isolation PASSED
 tests/test_target_env_reset.py::test_no_step_0_switching_penalty PASSED
 tests/test_target_env_reset.py::test_seed_reproducibility_on_reset PASSED
-====================== 40 passed, 300 warnings in 2.57s =======================
+tests/test_q_learning_reproducibility.py::test_q_learning_identical_seed_reproducibility PASSED
+tests/test_q_learning_reproducibility.py::test_q_learning_different_seeds_divergence PASSED
+tests/test_q_learning_reproducibility.py::test_q_learning_independent_from_global_np_random PASSED
+====================== 43 passed, 300 warnings in 2.95s =======================
 ```

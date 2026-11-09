@@ -60,10 +60,56 @@ st.markdown("""
         padding-right: 2.5rem !important;
     }
 
-    /* Global typography overrides to ensure readability */
-    html, body, [class*="css"], .stMarkdown {
-        color: #f1f5f9 !important;
+    /* Enforce Dark High-Contrast Theme everywhere */
+    .stApp, [data-testid="stAppViewContainer"], [data-testid="stHeader"] {
         background-color: #0b1120 !important;
+        color: #f1f5f9 !important;
+    }
+
+    [data-testid="stSidebar"], [data-testid="stSidebarContent"] {
+        background-color: #090e17 !important;
+        border-right: 1px solid #1e293b !important;
+    }
+
+    /* Headings */
+    h1, h2, h3, h4, h5, h6 {
+        color: #38bdf8 !important;
+        font-weight: 700 !important;
+    }
+
+    /* Standard paragraphs & labels */
+    p, label, span, li, td, th {
+        color: #f1f5f9 !important;
+    }
+
+    /* Streamlit Metric Styling */
+    [data-testid="stMetricValue"] {
+        color: #38bdf8 !important;
+        font-weight: 800 !important;
+    }
+    [data-testid="stMetricLabel"] {
+        color: #94a3b8 !important;
+        font-weight: 600 !important;
+    }
+
+    /* Streamlit Alert Boxes */
+    [data-testid="stAlert"] {
+        background-color: #1e293b !important;
+        color: #f1f5f9 !important;
+        border: 1px solid #38bdf8 !important;
+        border-radius: 8px !important;
+    }
+    [data-testid="stAlert"] * {
+        color: #f1f5f9 !important;
+    }
+
+    /* Streamlit Tabs */
+    button[data-baseweb="tab"] {
+        color: #94a3b8 !important;
+    }
+    button[data-baseweb="tab"][aria-selected="true"] {
+        color: #38bdf8 !important;
+        font-weight: 700 !important;
     }
 
     /* Main title */
@@ -465,8 +511,8 @@ elif menu_choice == "🛡️ Thử Nghiệm Độ Bền Vững & Cổng An Toàn
             st.image(str(rob_img), use_container_width=True)
 
     st.markdown("---")
-    st.markdown("### 🔌 Giả Lập Giao Thức Tự Động Hóa Tòa Nhà (BMS HIL & Shadow Mode)")
-    st.info("Trạng thái Triển khai Hiện tại: `RESEARCH_SIMULATION_ONLY` ➡️ Đã hoàn tất tầng kiểm định `OFFLINE_VALIDATED` và kết nối giao thức thử nghiệm `HARDWARE_IN_LOOP_VALIDATED`.")
+    st.markdown("### 🔌 Giả Lập Giao Thức Tự Động Hóa Tòa Nhà (BMS HIL & Shadow Mode Stubs)")
+    st.info("Trạng thái Triển khai Hiện tại: `RESEARCH_SIMULATION_ONLY` (Mô phỏng nghiên cứu học thuật). Các module `MockBMSControllerHIL` và `ShadowModeRunner` là các stub phần mềm giả lập cấu trúc gói tin BACnet/Modbus để kiểm thử logic, hoàn toàn chưa kết nối vật lý với thiết bị phần cứng DDC hay hệ thống BMS cơ điện thực tế.")
 
 
 # =========================================================================

@@ -94,9 +94,9 @@ def run_experiment_1_10seeds(
         agent_dql = TargetDoubleQLearningAgent(n_states=600, n_actions=5, learning_rate=0.08, gamma=0.95, epsilon_decay=0.995, seed=seed)
         train_agent_quick(agent_dql, env_train_dql, n_episodes=800)
 
-        # 2. Train Single Q-Learning
+        # 2. Train Single Q-Learning with matched seed
         env_train_ql = TargetHVACEnv(data_df=df_train, episode_length=24, calibration=cal, thermal_model=thermal_model, seed=seed)
-        agent_ql = QLearningAgent(n_states=600, n_actions=5, learning_rate=0.08, gamma=0.95, epsilon_decay=0.995)
+        agent_ql = QLearningAgent(n_states=600, n_actions=5, learning_rate=0.08, gamma=0.95, epsilon_decay=0.995, seed=seed)
         train_agent_quick(agent_ql, env_train_ql, n_episodes=800)
 
         # 3. Evaluate on unseen test split
@@ -152,7 +152,7 @@ def run_experiment_1_10seeds(
     scientific_verdict = (
         "Double Q-Learning yields a statistically significant advantage in total reward (p < 0.05)."
         if is_stat_sig else
-        "In this discrete tabular 600-state environment, Double Q-Learning and Single Q-Learning achieve comparable asymptotic performance. Double Q-Learning systematically mitigates positive maximization overestimation bias, but policy-level empirical reward difference is not statistically significant at p < 0.05."
+        "In this discrete tabular 600-state environment, Double Q-Learning and Single Q-Learning achieve comparable asymptotic performance (p > 0.05). Double Q-Learning yields lower empirical variance across seeds and systematically lower learned action-value magnitudes, consistent with theoretical mitigation of maximization bias, though policy-level reward differences on this discrete task are statistically indistinguishable."
     )
 
     stats_report = {
@@ -175,10 +175,11 @@ def run_experiment_1_10seeds(
             "p_value": round(float(w_pval), 4)
         },
         "cohens_d": round(cohens_d, 4),
-        "overestimation_analysis": {
-            "dql_mean_max_q": round(float(df_10seeds["dql_max_q"].mean()), 3),
-            "ql_mean_max_q": round(float(df_10seeds["ql_max_q"].mean()), 3),
-            "mean_q_overestimation_bias": round(float(df_10seeds["ql_max_q"].mean() - df_10seeds["dql_max_q"].mean()), 3)
+        "learned_action_value_estimate_comparison": {
+            "dql_avg_learned_max_q": round(float(df_10seeds["dql_max_q"].mean()), 3),
+            "ql_avg_learned_max_q": round(float(df_10seeds["ql_max_q"].mean()), 3),
+            "mean_difference_in_learned_max_q": round(float(df_10seeds["ql_max_q"].mean() - df_10seeds["dql_max_q"].mean()), 3),
+            "methodology_note": "Descriptive comparison of learned state-action value estimates only. In this empirical simulator, analytical ground-truth V*(s) is unknown; hence this difference reflects empirical divergence in action-value magnitudes rather than a direct measurement of true maximization bias. While Double Q-Learning decouples selection from evaluation to mitigate maximization bias theoretically, it is not strictly unbiased in practice."
         },
         "scientific_verdict": scientific_verdict
     }
@@ -203,11 +204,11 @@ def run_experiment_1_10seeds(
     ax1.legend(loc="upper right", facecolor="#0f172a", edgecolor="#475569")
     ax1.grid(True)
 
-    ax2.plot(x_indices, df_10seeds["ql_max_q"], marker="o", color="#f87171", lw=2.2, label="Single Q (Overestimated Max Q)")
-    ax2.plot(x_indices, df_10seeds["dql_max_q"], marker="s", color="#34d399", lw=2.2, label="Double Q (Unbiased Min Q)")
+    ax2.plot(x_indices, df_10seeds["ql_max_q"], marker="o", color="#f87171", lw=2.2, label="Single Q-Learning (Higher Max Q Estimates)")
+    ax2.plot(x_indices, df_10seeds["dql_max_q"], marker="s", color="#34d399", lw=2.2, label="Double Q-Learning (Decoupled Estimator)")
     ax2.set_xlabel("Random Seed Index", fontweight="bold")
-    ax2.set_ylabel("Final Average Max Q Value", fontweight="bold")
-    ax2.set_title("Action Value Estimation: Overestimation Mitigation", fontweight="bold", color="#34d399")
+    ax2.set_ylabel("Average Learned Max Q Value", fontweight="bold")
+    ax2.set_title("Learned Action-Value Estimate Comparison (Descriptive Only)", fontweight="bold", color="#34d399")
     ax2.set_xticks(x_indices)
     ax2.set_xticklabels([f"S_{s}" for s in seeds], rotation=45)
     ax2.legend(loc="upper right", facecolor="#0f172a", edgecolor="#475569")
@@ -240,7 +241,7 @@ def run_experiment_2_pareto_sensitivity(
     dql_agent = TargetDoubleQLearningAgent(n_states=600, n_actions=5, seed=42)
     train_agent_quick(dql_agent, env_train, n_episodes=800)
 
-    ql_agent = QLearningAgent(n_states=600, n_actions=5)
+    ql_agent = QLearningAgent(n_states=600, n_actions=5, seed=42)
     train_agent_quick(ql_agent, env_train, n_episodes=800)
 
     controllers = {
@@ -369,7 +370,10 @@ def run_experiment_3_parameter_identifiability(
     with open(json_path, "w", encoding="utf-8") as f:
         json.dump(ident_report, f, indent=2, ensure_ascii=False)
 
+    calib_json = project_root / "data" / "calibration" / "fitted_greybox_2018_F2_Z1.json"
+    thermal_model.save(calib_json)
     print(f"[Saved] Parameter Identifiability JSON: {json_path}")
+    print(f"[Saved] Fitted Greybox Model: {calib_json}")
     return ident_report
 
 

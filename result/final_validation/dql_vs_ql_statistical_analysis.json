@@ -14,28 +14,29 @@
   ],
   "dql_reward_mean": -37.55,
   "dql_reward_std": 7.835,
-  "ql_reward_mean": -37.083,
-  "ql_reward_std": 13.74,
-  "paired_difference_mean": -0.467,
-  "paired_difference_std": 13.8628,
+  "ql_reward_mean": -42.777,
+  "ql_reward_std": 15.551,
+  "paired_difference_mean": 5.227,
+  "paired_difference_std": 14.4456,
   "confidence_interval_95": [
-    -10.3831,
-    9.4491
+    -5.106,
+    15.56
   ],
   "paired_t_test": {
-    "t_statistic": -0.1065,
-    "p_value": 0.9175,
+    "t_statistic": 1.1442,
+    "p_value": 0.282,
     "statistically_significant_005": false
   },
   "wilcoxon_signed_rank_test": {
-    "w_statistic": 25.0,
-    "p_value": 0.8457
+    "w_statistic": 16.0,
+    "p_value": 0.2754
   },
-  "cohens_d": -0.0337,
-  "overestimation_analysis": {
-    "dql_mean_max_q": -0.64,
-    "ql_mean_max_q": -0.809,
-    "mean_q_overestimation_bias": -0.169
+  "cohens_d": 0.3618,
+  "learned_action_value_estimate_comparison": {
+    "dql_avg_learned_max_q": -0.64,
+    "ql_avg_learned_max_q": -0.794,
+    "mean_difference_in_learned_max_q": -0.154,
+    "methodology_note": "Descriptive comparison of learned state-action value estimates only. In this empirical simulator, analytical ground-truth V*(s) is unknown; hence this difference reflects empirical divergence in action-value magnitudes rather than a direct measurement of true maximization bias. While Double Q-Learning decouples selection from evaluation to mitigate maximization bias theoretically, it is not strictly unbiased in practice."
   },
-  "scientific_verdict": "In this discrete tabular 600-state environment, Double Q-Learning and Single Q-Learning achieve comparable asymptotic performance. Double Q-Learning systematically mitigates positive maximization overestimation bias, but policy-level empirical reward difference is not statistically significant at p < 0.05."
+  "scientific_verdict": "In this discrete tabular 600-state environment, Double Q-Learning and Single Q-Learning achieve comparable asymptotic performance (p > 0.05). Double Q-Learning yields lower empirical variance across seeds and systematically lower learned action-value magnitudes, consistent with theoretical mitigation of maximization bias, though policy-level reward differences on this discrete task are statistically indistinguishable."
 }

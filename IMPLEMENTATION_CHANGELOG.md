@@ -130,10 +130,14 @@ The original Phase 1–6 implementation was strictly preserved under Git version
   - Trained `QLearningAgent` (600 states) on identical environment to evaluate overestimation bias against Double Q-Learning.
   - Saved `dql_vs_ql_overestimation.png` and `baselines_multiseed_raw.csv`.
 
-### 5. Automated Testing Expansion (32/32 Tests Passing)
+### 5. Automated Testing Expansion (43/43 Tests Passing)
 - **`tests/test_data_leakage.py`**: Added 3 tests (3-way partition integrity, deliberate leakage detection, bounded interpolation with quality mask).
 - **`tests/test_physical_consistency.py`**: Added test for un-fitted model flag and sample size rejection ($N < 50$).
 - **`tests/test_target_dql.py`**: Added test for environment physical configuration reflection via `get_model_config()`.
+- **`tests/test_target_env_reset.py`**: Added 3 tests for complete episode isolation and zero step 0 switching penalty.
+- **`tests/test_advanced_reward.py`**: Added 3 tests for signed multi-objective decomposition identity and preference profiles.
+- **`tests/test_q_learning_reproducibility.py`**: Added 3 tests for independent seeded RNG and reproducibility without global state.
+- **`tests/test_safety_gateway.py`**: Added tests for immutable `SafetyConfig` and sensor anomaly fail-safe.
 
 ### 6. User Interface Contrast & Full-Width Compliance
 - **`.streamlit/config.toml`**: Configured dark theme (`base="dark"`, `backgroundColor="#0b1120"`, `textColor="#f1f5f9"`).
@@ -143,5 +147,5 @@ The original Phase 1–6 implementation was strictly preserved under Git version
   - Integrated all 9 selectable controllers, sensitivity table, and multi-seed benchmark tabs.
 
 ### 7. Documentation & Final Academic Report
-- **`BAO_CAO_TONG_KET_DO_AN.md`**: Expanded into 20 comprehensive Vietnamese chapters with exact executed numbers.
+- **`BAO_CAO_TONG_KET_DO_AN.md`**: Expanded into 21 comprehensive Vietnamese chapters including Chapter 21 dedicated to proven vs unproven boundaries.
 - **`GENERALIZATION_BENCHMARK.md`**, **`TRAINING_AND_EVALUATION.md`**, **`PHYSICAL_MODEL_VALIDATION.md`**, **`DATASET_AND_PROVENANCE.md`**, **`IMPLEMENTATION_STATUS.md`**, **`README.md`**: Fully updated.

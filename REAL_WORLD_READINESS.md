@@ -21,10 +21,10 @@ flowchart LR
 
 ### Current System Certification Status
 - **Current Certified Tier**: **`RESEARCH_SIMULATION_ONLY`**
-- **Verified Subsystem Levels**:
-  - `OFFLINE_VALIDATED`: Confirmed via 100% pass rate across strict temporal splits, 4-domain generalization benchmarks, and physical consistency tests.
-  - `HARDWARE_IN_LOOP_VALIDATED`: Confirmed via Mock BMS BACnet/Modbus socket emulation and command packet validation.
-- **Strict Prohibition**: **Live closed-loop actuation on physical building equipment is strictly prohibited** until Tier 4 (Shadow Mode validation on live telemetry) and Tier 5 (Hardware interlocks and site engineer sign-off) are completed.
+- **Offline Software Verification**:
+  - The offline software modules passed unit tests, temporal splits, 4-domain generalization benchmarks, and physical consistency checks.
+  - Software mock stubs for BACnet/Modbus packet exchange (`MockBMSControllerHIL`) and shadow recommendation logging (`ShadowModeRunner`) are implemented as algorithmic prototypes only. No physical connection to university BMS panels was performed.
+- **Strict Prohibition**: **Live closed-loop actuation on physical building equipment is strictly prohibited** because hardware-in-the-loop and live shadow-mode validation have not been performed on physical BMS controllers.
 
 ---
 
