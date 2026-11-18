@@ -46,18 +46,34 @@ flowchart LR
 
 1. **Extreme Overheat Emergency Override**:
    - **Condition**: $T_{indoor} \ge 29.5^\circ\text{C}$
-   - **Trigger**: Agent proposes `AC_OFF` (Action 3), `WINDOW_OPEN` (Action 4), or `SET_27` (Action 2).
-   - **Override**: Forces `SET_23` (Action 1, Maximum Cooling).
+   - **Trigger**: Agent proposes idle, heating, or mild cooling.
+   - **Override**: Forces `MAX_COOL` (Action 2).
    - **Rationale**: Immediate protection against heat stress and IT server room overheating.
 
 2. **Extreme Freeze Emergency Override**:
    - **Condition**: $T_{indoor} \le 18.0^\circ\text{C}$
-   - **Trigger**: Agent proposes cooling actions (`SET_25`, `SET_23`, or `SET_27`).
-   - **Override**: Forces `AC_OFF` (Action 3).
+   - **Trigger**: Agent proposes cooling actions.
+   - **Override**: Forces `COMFORT_HEAT` (Action 6) or shutdowns cooling.
    - **Rationale**: Prevents room overcooling, condensation on diffuser grilles, and cooling coil freezing.
 
-3. **Compressor Short-Cycling Protection**:
-   - **Condition**: Rapid alternation between Active Cooling ($0, 1, 2$) and Compressor Shutdown ($3, 4$).
+3. **High CO2 Indoor Air Quality Emergency Flush (Version 2.0)**:
+   - **Condition**: $CO_2 \ge 1600\text{ ppm}$
+   - **Trigger**: Agent proposes non-ventilating or low-air actions.
+   - **Override**: Forces `ACTIVE_VENT_PURIFY` (Action 5: 500 m³/h fresh air exchange).
+   - **Rationale**: Protects cognitive function and health of building occupants.
+
+4. **Multi-Hazard Window Environmental Locks (Version 2.0)**:
+   - **Night Security Hours**: Window open prohibited between 22:00 and 06:00.
+   - **Scorching Outdoor Heat**: Vetoed if $T_{amb} > 33.0^\circ\text{C}$.
+   - **Monsoon Rain / Storm**: Vetoed if $RH_{amb} > 85.0\%$.
+   - **Outdoor Smog / PM2.5**: Vetoed if $PM_{2.5,amb} > 60.0\ \mu\text{g/m}^3$.
+
+5. **Mutual Exclusion Hardware Interlocks**:
+   - Heating and cooling are strictly interlocked: cannot actuate simultaneously.
+   - Humidification and dehumidification are strictly interlocked.
+
+6. **Compressor Short-Cycling Protection**:
+   - **Condition**: Rapid alternation between Active Cooling and Compressor Shutdown.
    - **Rule**: Minimum dwell time of **2 hours (2 consecutive time steps)** in the current operating state.
    - **Override**: Reverts to the previous action, deferring the state change.
    - **Rationale**: Repeated compressor start/stop cycles cause severe mechanical wear, thermal stress on windings, and premature motor failure.

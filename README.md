@@ -1,39 +1,56 @@
 # SmartHVACControlByDoubleQLearning
-## Cross-Domain Generalization, Physical Validity & Real-World HVAC Applicability
+## Multi-Device HVAC Digital Twin & Step-by-Step Agent Control Platform
 
-Ứng dụng thuật toán **Double Q-Learning** trong điều khiển thông minh hệ thống HVAC (Heating, Ventilation, and Air Conditioning) cho tòa nhà thông minh, sử dụng bộ dữ liệu thực tế **CU-BEMS (Smart Building Energy and IAQ Data)** hướng đến khả năng tổng quát hóa đa miền, tính hợp lệ vật lý và khả năng triển khai cơ điện thực tế.
+Ứng dụng thuật toán **Double Q-Learning** trong điều khiển thông minh hệ thống HVAC (Heating, Ventilation, and Air Conditioning) đa thiết bị trên nền tảng **Digital Twin vật lý số**, kết hợp bộ dữ liệu thực tế **CU-BEMS** với các mô hình truyền nhiệt, cân bằng ẩm nhiệt động học (Psychrometrics), cơ chế thông gió CO₂ và lọc bụi mịn PM2.5.
 
----
-
-## 🌟 Tổng Quan Dự Án & Định Hướng Nghiên Cứu Mới
-
-Dự án phát triển một hệ thống điều khiển thông minh sử dụng **Học tăng cường (Reinforcement Learning)**, cụ thể là thuật toán **Double Q-Learning** (Hado van Hasselt, 2010), nhằm giải quyết bài toán đa mục tiêu cân bằng giữa **Tiện nghi nhiệt (Thermal Comfort theo chuẩn ASHRAE 55)** và **Tiết kiệm năng lượng điện (Energy Efficiency)**.
-
-Khác biệt với các nghiên cứu mô phỏng lý tưởng hóa, dự án đặt trọng tâm vào 5 trụ cột khoa học:
-1. **Khả năng tổng quát hóa đa miền (Cross-Domain Generalization)**: Khảo sát chuyển giao chính sách qua 4 trục: Thời gian (Temporal), Khác Năm (Cross-Year 2018 $\to$ 2019), Khác Phòng (Cross-Zone), Khác Tầng (Cross-Floor) với 3 chế độ chuyển giao: `ZERO-SHOT`, `CALIBRATION-ONLY`, `FINE-TUNING` (ngân sách 10 và 25 episodes) trên giao thức phân chia 3 pha độc lập triệt tiêu 100% rò rỉ dữ liệu (No Data Leakage).
-2. **Kiểm định tính hợp lệ vật lý (Physical Model Validity)**: Chứng minh mô hình hộp xám **Grey-Box 1st-Order RC** vượt qua 100% kiểm tra nhiệt động học và ổn định ngoại suy, khắc phục hoàn toàn hiện tượng sụp đổ của mô hình học máy hộp đen (Random Forest).
-3. **Triệt tiêu hiện tượng thổi phồng giá trị (Maximization Bias Mitigation)**: Tách biệt 2 bảng Q độc lập ($Q_A, Q_B$), khắc phục sai số ước lượng cực đại mà Q-Learning truyền thống mắc phải, minh chứng qua đồ thị đối đầu thực nghiệm.
-4. **Cổng an toàn xác định (Safety Gateway)**: Khóa thời gian chuyển mạch bảo vệ block máy nén $\ge 1$ giờ (Anti-Short-Cycling), khống chế khẩn cấp quá nhiệt ($29.5^\circ\text{C}$), quá lạnh ($18.0^\circ\text{C}$), cấm mở cửa sổ khi thời tiết xấu hoặc ban đêm.
-5. **Mức độ sẵn sàng triển khai (Tiered Deployment Readiness)**: Phân cấp 5 bậc minh bạch từ `RESEARCH_SIMULATION_ONLY` đến `OFFLINE_VALIDATED`, `HARDWARE_IN_LOOP_VALIDATED` và `SHADOW_MODE_VALIDATED`.
+> [!IMPORTANT]
+> **Tuyên bố phạm vi khoa học**: Đây là dự án nghiên cứu và mô phỏng số (RESEARCH_SIMULATION_ONLY). Toàn bộ kết quả tiết kiệm năng lượng và tuân thủ tiện nghi được đo lường trong môi trường Digital Twin, tuyệt đối không tuyên bố là hệ thống đã kiểm chứng hay điều khiển thành công trên tòa nhà vật lý thực tế.
 
 ---
 
-## 📚 Tài Liệu Kỹ Thuật Chuyên Sâu (Technical Documentation)
+## 🌟 Tính Năng Mới — Bản Nâng Cấp Digital Twin Đa Thiết Bị (Version 2.0)
 
-Toàn bộ hệ thống được dẫn chứng bằng 11 tài liệu kỹ thuật chi tiết:
+1. **Mô phỏng 7 nhóm thiết bị HVAC đồng bộ (7 Actuator Groups)**:
+   - **Cooling (Máy lạnh)**: Điều khiển máy nén nhiều tầng (OFF, LOW, MED, HIGH), tính toán công suất điện (kW), công suất nhiệt lạnh theo COP (3.2), và ngưng tụ ẩm phụ trợ.
+   - **Heating (Máy sưởi)**: Điều khiển sưởi ấm (OFF, LOW, HIGH), khóa liên động (Interlock) tuyệt đối không cho sưởi và làm lạnh đồng thời.
+   - **Mechanical Ventilation (Quạt cấp & Quạt hút)**: Điều khiển lưu lượng gió tươi (100 - 500 m³/h), mô phỏng quá trình pha loãng CO₂ và trao đổi nhiệt/ẩm với khí trời.
+   - **Window / Damper (Cửa sổ & Van gió)**: Mô phỏng thông gió tự nhiên dựa trên chênh lệch nhiệt độ trong/ngoài và diện tích mở, có khóa bảo vệ khi thời tiết xấu hoặc ban đêm.
+   - **Humidification (Máy tạo ẩm)**: Bổ sung hơi nước (0.25 - 0.60 kg/h), tác động trực tiếp vào tỷ trọng ẩm $W$ và độ ẩm tương đối %RH qua công thức Magnus.
+   - **Dehumidification (Máy hút ẩm)**: Hút ẩm chuyên dụng (1.20 kg/h) mà không làm hạ nhiệt độ phòng quá mức; khóa liên động loại trừ máy tạo ẩm.
+   - **Air Filtration (Máy lọc không khí HEPA)**: Lọc bụi mịn PM2.5 theo chỉ số CADR (80 - 450 m³/h), không làm giảm CO₂ trừ khi có gió tươi.
+2. **Không gian 720 trạng thái rời rạc $\times$ 12 Coordinated Action Templates**:
+   - Tránh bùng nổ tổ hợp ($3^7 = 2.187$ actions) bằng 12 kịch bản vận hành phối hợp vật lý chặt chẽ.
+   - Lưu trữ bảng Q kép ($Q_A, Q_B$) với $720 \times 12 = 8.640$ phần tử mỗi bảng.
+3. **Giao diện mới duy nhất: HVAC Agent Live Simulation (`app/live_simulation_gui.py`)**:
+   - Chạy từng bước chính xác (Step Forward 1 step), Start, Pause, Resume, Stop, Reset.
+   - Điều chỉnh tốc độ mô phỏng linh hoạt: 0.25x (2000ms), 0.5x (1000ms), 1.0x (500ms), 2.0x (250ms), 5.0x (100ms).
+   - Tách biệt rõ Simulation Time và Wall-clock Time.
+   - Hiển thị đầy đủ nhãn nguồn gốc (`OBSERVED`, `DERIVED`, `EXTERNAL`, `FITTED`, `SIMULATED_ASSUMED`, `SIMULATED`).
+   - Mặc định mở ở **Evaluation Mode** (Q-Table bị đóng băng 100%, không cập nhật).
+   - Có tùy chọn **Online Learning Mode** (Cập nhật Q1/Q2 ngay trong lúc mô phỏng khi người dùng bật).
+   - Tuân thủ chỉ thị `[ERR-202611-003][gui-combobox-width]` (Combobox ở hàng riêng rộng $\ge 600$px, popdown width cấu hình chuẩn, nhãn chi tiết động bên dưới).
+4. **Hàm thưởng đa mục tiêu 7 thành phần (Multi-Objective Reward Decomposition)**:
+   $$R_{total} = R_{temp} + R_{humidity} + R_{co2} + R_{air\_quality} + R_{energy} + R_{switching} + R_{safety}$$
+5. **Bộ kiểm thử toàn diện: 68/68 Unit Tests (100% Pass Rate)**:
+   - 43 bài test kế thừa từ hệ thống ban đầu (Grey-box, Safety, Data leakage, Domain transfer).
+   - 25 bài test vật lý, tâm trắc học Magnus, nồng độ ẩm, CO₂, lọc bụi mịn PM2.5, công suất standby máy nén, kịch bản môi trường và bảng Q kép mới.
 
-1. 🏛️ **[PROJECT_ARCHITECTURE.md](PROJECT_ARCHITECTURE.md)**: Chi tiết kiến trúc 9 tầng của hệ thống, sơ đồ phân luồng Mermaid từ Tầng Dữ liệu đến Cổng an toàn và Scenario Lab.
-2. 📊 **[DATASET_AND_PROVENANCE.md](DATASET_AND_PROVENANCE.md)**: Tài liệu 14 tệp CSV CU-BEMS, phân tích sự cố đứt gãy cảm biến (Sensor Outages), chính sách nội suy giới hạn $\le 3$ giờ có mặt nạ chất lượng và Bảng nguồn gốc dữ liệu (`SYSTEM_PROVENANCE_REGISTRY`).
-3. 🌡️ **[PHYSICAL_MODEL_VALIDATION.md](PHYSICAL_MODEL_VALIDATION.md)**: So sánh đối đầu giữa Persistence Baseline vs Random Forest vs Grey-Box RC Model, nguyên nhân sụp đổ của Random Forest, Báo cáo định danh tham số ($k_{env}, k_{int}, k_{ac}, h_{env}, h_T, h_{ac}$) và Phân tích độ nhạy $\pm 25\%$.
-4. 🌐 **[GENERALIZATION_BENCHMARK.md](GENERALIZATION_BENCHMARK.md)**: Kết quả benchmark chuyển giao 4 trục, 3 chế độ (Zero-Shot, Calibration-Only, Multi-Budget Fine-Tuning) trên giao thức phân tách 3 pha không rò rỉ.
-5. 🎯 **[TRAINING_AND_EVALUATION.md](TRAINING_AND_EVALUATION.md)**: Không gian 600 trạng thái $\times$ 5 hành động, hàm thưởng đa mục tiêu và kết quả điểm chuẩn 5 hạt giống (5 seeds) đối đầu 9 chiến lược điều khiển.
-6. 🛡️ **[REAL_WORLD_READINESS.md](REAL_WORLD_READINESS.md)**: Khung phân cấp sẵn sàng triển khai 5 bậc, quy tắc Cổng an toàn, giao thức Mock BMS HIL (BACnet/Modbus) và chế độ Shadow Mode.
-7. ⚠️ **[LIMITATIONS_AND_FUTURE_WORK.md](LIMITATIONS_AND_FUTURE_WORK.md)**: Giới hạn quan sát của CU-BEMS, kết quả thử nghiệm 7 kịch bản nhiễu loạn môi trường và lộ trình nghiên cứu tiếp theo.
-8. 📝 **[IMPLEMENTATION_CHANGELOG.md](IMPLEMENTATION_CHANGELOG.md)**: Nhật ký chi tiết từng tệp mã nguồn tạo mới, chỉnh sửa và bảo tồn phiên bản cũ.
-9. 🔬 **[TECHNICAL_LIMITATIONS.md](TECHNICAL_LIMITATIONS.md)**: Báo cáo khoa học phản biện chi tiết về giới hạn toán học và nhiệt động học của hệ thống.
-10. 📊 **[IMPLEMENTATION_STATUS.md](IMPLEMENTATION_STATUS.md)**: Bảng theo dõi tiến độ chi tiết từng hạng mục kỹ thuật của đề tài.
-11. 🛡️ **[FINAL_VALIDATION_STATUS.md](FINAL_VALIDATION_STATUS.md)**: Báo cáo kiểm định học thuật cuối cùng, bảng đối chiếu tiêu chuẩn, kết quả 40/40 tests và phân tích thống kê 10 hạt giống.
-12. 🇻🇳 **[BAO_CAO_TONG_KET_DO_AN.md](BAO_CAO_TONG_KET_DO_AN.md)**: Báo cáo tổng kết đồ án toàn diện gồm 21 chương tiếng Việt phục vụ báo cáo và bảo vệ đồ án trước hội đồng giảng viên.
+---
+
+## 📚 Tài Liệu Kỹ Thuật Đầy Đủ
+
+1. 🏛️ **[HVAC_UPGRADE_DESIGN.md](HVAC_UPGRADE_DESIGN.md)**: Bản thiết kế kiến trúc nâng cấp Digital Twin đa thiết bị, phân tích tương thích và quản trị rủi ro.
+2. 🧠 **[AGENT_LEARNING_EXPLAINED.md](AGENT_LEARNING_EXPLAINED.md)**: Giải thích chi tiết một step, episode, cách agent chọn action, luật cập nhật Double Q-Learning, Evaluation Mode vs Online Learning Mode.
+3. 🔬 **[HVAC_SIMULATION_ASSUMPTIONS.md](HVAC_SIMULATION_ASSUMPTIONS.md)**: Toàn bộ phương trình nhiệt động học, ẩm học Magnus, CO₂, PM2.5, công suất thiết bị và bảng Provenance.
+4. ⚙️ **[HVAC_ACTION_SPACE.md](HVAC_ACTION_SPACE.md)**: Phân tích toán học không gian hành động, lý do dùng 12 Action Templates và các khóa liên động cơ điện.
+5. 🎯 **[HVAC_REWARD_DESIGN.md](HVAC_REWARD_DESIGN.md)**: Thiết kế hàm thưởng phân rã 7 thành phần, đơn vị đo, cấu hình trọng số theo ưu tiên của người dùng.
+6. 🌐 **[HVAC_SCOPE_AND_COVERAGE.md](HVAC_SCOPE_AND_COVERAGE.md)**: Phân loại 3 cấp độ phạm vi mô phỏng: Directly Simulated, Simplified, và Out of Scope.
+7. 🏛️ **[PROJECT_ARCHITECTURE.md](PROJECT_ARCHITECTURE.md)**: Kiến trúc hệ thống 9 tầng.
+8. 📊 **[DATASET_AND_PROVENANCE.md](DATASET_AND_PROVENANCE.md)**: Quản trị dữ liệu CU-BEMS và khung nhãn nguồn gốc.
+9. 🌡️ **[PHYSICAL_MODEL_VALIDATION.md](PHYSICAL_MODEL_VALIDATION.md)**: Thẩm định mô hình RC bậc 1 so với Random Forest và Persistence.
+10. 🌐 **[GENERALIZATION_BENCHMARK.md](GENERALIZATION_BENCHMARK.md)**: Benchmark tổng quát hóa 4 trục chuyển miền.
+11. 🛡️ **[REAL_WORLD_READINESS.md](REAL_WORLD_READINESS.md)**: Khung phân cấp sẵn sàng triển khai 5 bậc và Mock BMS HIL.
+12. 🇻🇳 **[BAO_CAO_TONG_KET_DO_AN.md](BAO_CAO_TONG_KET_DO_AN.md)**: Báo cáo tổng kết đồ án toàn diện gồm 21 chương tiếng Việt.
 
 ---
 
@@ -165,23 +182,28 @@ esult/final_validation/dql_vs_ql_statistical_analysis.json):
 pip install numpy pandas scikit-learn scipy matplotlib streamlit pytest
 ```
 
-### 2. Chạy toàn bộ 43 Unit Test tự động (100% Pass)
+### 2. Chạy toàn bộ 68 Unit Test tự động (100% Pass)
 ```bash
 python -m pytest tests/ -v
 ```
+*(Bao gồm 43 unit test kế thừa và 25 unit test mới về Digital Twin đa thiết bị, cân bằng ẩm Magnus, CO2, PM2.5, công suất standby máy nén, kịch bản môi trường, Cổng an toàn và Q kép).*
 
-### 3. Thực thi Pipeline Huấn Luyện & Benchmark Toàn Diện
+### 3. Khởi chạy Giao Diện Mới: HVAC Agent Live Simulation (Step-by-Step Desktop GUI)
 ```bash
-python train_target_dql.py
-```
-*Lệnh này sẽ tự động: chuẩn hóa dữ liệu, khớp mô hình nhiệt vật lý Grey-Box RC, phân tích độ nhạy, huấn luyện DQL và Single-Q (800 episodes), đánh giá đối đầu 9 thuật toán trên 5 hạt giống, benchmark 4 miền x 3 chế độ chuyển giao, kiểm thử 7 kịch bản nhiễu loạn môi trường và xuất báo cáo vào `result/`.*
+# Cách 1: Chạy từ thư mục gốc
+python run_live_simulation.py
 
-### 4. Tạo các biểu đồ trực quan hóa xuất bản
+# Cách 2: Chạy trực tiếp module GUI
+python -m app.live_simulation_gui
+```
+*Giao diện Desktop chuyên nghiệp hỗ trợ: Chạy từng bước chậm (Step Forward), Start/Pause/Resume/Stop, chọn 4 kịch bản phòng, kiểm soát 5 mức tốc độ, hiển thị trực quan 7 nhóm thiết bị, minh bạch Decision Trace & giá trị Q1/Q2, biểu đồ vi phân thời gian thực, và chuyển đổi linh hoạt giữa Evaluation Mode (đóng băng Q-table) và Online Learning Mode (cập nhật Q-table).*
+
+### 4. Huấn luyện Agent Đa Thiết Bị & Chạy Benchmark So Sánh
 ```bash
-python src/util/plot_benchmarks.py
+python train_multi_device_dql.py
 ```
 
-### 5. Khởi chạy Phòng Thí Nghiệm Nghiên Cứu Tương Tác (Streamlit Lab)
+### 5. Khởi chạy Phòng Thí Nghiệm Web (Streamlit Research Lab)
 ```bash
 streamlit run app/app.py
 ```

@@ -95,7 +95,24 @@ esult/final_validation/dql_vs_ql_statistical_analysis.json):
 
 ---
 
-## 5. Deployment & Actuation Boundaries
+## 6. Multi-Device Digital Twin Limitations (Version 2.0)
+
+### 6.1 Lumped Mass Transport for CO2 and Particulates
+In `MultiDeviceHVACEnv`, carbon dioxide ($CO_2$) and particulate matter ($PM_{2.5}$) are modeled assuming instantaneous perfect spatial mixing:
+- *Physical Limitation*: Real indoor air exhibits stagnant recirculation zones, thermal plumes above human bodies, and localized particulate resuspension near foot traffic.
+- *Simulation Consequence*: The agent evaluates room-average concentrations rather than breathing-zone microclimates.
+
+### 6.2 Action Template Discretization
+To prevent combinatorial explosion ($3^7 = 2,187$ actions), actuation is structured into 12 discrete Coordinated Action Templates:
+- *Limitation*: Continuous modulation of fan speed (e.g. 235 m³/h) or variable chilled water valves is not available to the discrete tabular agent.
+- *Mitigation*: Action templates align with commercial BMS multi-mode presets (Comfort, Economy, Night Setback, Purge).
+
+### 6.3 Psychrometric Simplifications
+While moisture balance uses exact Magnus saturation vapor pressure and water vapor mass balance, the latent enthalpy feedback on sensible temperature (heat of vaporization during humidifier moisture addition or coil condensation) is treated through empirical effective coefficients rather than full psychrometric Mollier enthalpy integration.
+
+---
+
+## 7. Deployment & Actuation Boundaries
 
 | Dimension | Physical Real-World Requirement | Current Simulation Status | Readiness Assessment |
 | :--- | :--- | :--- | :---: |

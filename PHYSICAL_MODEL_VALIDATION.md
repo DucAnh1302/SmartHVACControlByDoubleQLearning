@@ -89,3 +89,15 @@ To evaluate model stability and error propagation, a one-at-a-time local sensiti
 
 ### Key Finding:
 Envelope conductance $k_{env}$ has the highest sensitivity ($\Delta T = 0.26^\circ\text{C}$), underscoring that ambient weather variations and façade insulation have the dominant impact on room thermal drift.
+
+---
+
+## 6. Version 2.0 Psychrometric Magnus Validation & Moisture Mass Balance
+
+In Version 2.0 (`src/environment/multi_device_env.py`), moisture modeling transitions from linear heuristic approximations to rigorous **psychrometric water vapor mass balance**:
+1. **Saturation Vapor Pressure ($P_{sat}$)**: Calculated via the Magnus-Tetens formulation over $[-20^\circ\text{C}, 60^\circ\text{C}]$:
+   $$P_{sat}(T) = 0.61078 \exp\left(\frac{17.27 T}{T + 237.3}\right)\text{ kPa}$$
+2. **Moisture Mass Inversion Consistency**: Validated across $T \in [18, 32]^\circ\text{C}$ and $RH \in [30, 85]\%RH$ (`tests/test_multi_device_simulation.py::test_psychrometric_consistency`). Numerical reconstruction error $|RH - \text{Invert}(T, W(T, RH))| \le 0.05\%RH$.
+3. **CO2 Mass Balance**: Validated occupant metabolic generation ($G_{CO2} = 18,000\text{ ppm}\cdot\text{m}^3\text{/h/person}$) and fresh air ventilation decay toward ambient background ($415\text{ ppm}$).
+4. **PM2.5 Filtration Balance**: Validated clean air delivery rate removal without unphysical cross-gas scrubbing.
+

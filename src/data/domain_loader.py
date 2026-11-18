@@ -139,6 +139,7 @@ def preprocess_domain_timeseries(
     # 8. Temporal & calendar features
     clean_df["hour"] = clean_df["datetime"].dt.hour
     clean_df["day_of_week"] = clean_df["datetime"].dt.day_of_week
+    clean_df["dayofweek"] = clean_df["day_of_week"]  # Standardized alias for consistency
     clean_df["is_weekend"] = (clean_df["day_of_week"] >= 5).astype(int)
     clean_df["is_workhour"] = (
         (clean_df["is_weekend"] == 0) & (clean_df["hour"] >= 8) & (clean_df["hour"] < 18)

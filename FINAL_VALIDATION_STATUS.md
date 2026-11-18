@@ -1,10 +1,10 @@
 # FINAL_VALIDATION_STATUS.md
 ## SmartHVACControlByDoubleQLearning — Báo Cáo Kiểm Định Học Thuật & Hoàn Tất Nghiên Cứu
 
-- **Ngày cập nhật**: 2026-11-09T11:25:00+07:00
-- **Nhánh Git**: `feature/academic-delivery`
-- **Bộ kiểm thử tự động**: **43 / 43 Tests ĐẠT 100% (Pass Rate: 100%)**
-- **Trạng thái sẵn sàng học thuật**: **HOÀN TẤT TOÀN DIỆN & TRUNG THỰC KHOA HỌC**
+- **Ngày cập nhật**: 2026-11-18T13:00:00+07:00
+- **Phiên bản hệ thống**: **2.0.0 (Full HVAC Digital Twin & Step-by-Step Agent Control)**
+- **Bộ kiểm thử tự động**: **68 / 68 Tests ĐẠT 100% (Pass Rate: 100%)**
+- **Trạng thái sẵn sàng học thuật**: **HOÀN TẤT TOÀN DIỆN & TRUNG THỰC KHOA HỌC (RESEARCH_SIMULATION_ONLY)**
 
 ---
 
@@ -12,14 +12,16 @@
 
 | STT | Tiêu chí Kiểm định Học thuật | Trạng thái | Minh chứng & Tệp Nguồn |
 |---|---|:---:|---|
-| 1 | **Cô lập Episode & Reset Môi trường** | **ĐÃ HOÀN TẤT** | `src/environment/target_env.py` (`reset()` khôi phục `window_state=0`, `last_action=None`, `episode_energy=0`, `switching_count=0`; Bước 0 có chi phí chuyển đổi $= 0$). Unit tests: `tests/test_target_env_reset.py`. |
-| 2 | **Phân rã Hàm thưởng Đa mục tiêu có Dấu** | **ĐÃ HOÀN TẤT** | `src/reward/advanced_reward.py` phân rã thành $R_{total} = R_{comfort} + R_{safety} + R_{energy} + R_{switching} + R_{humidity}$. Hỗ trợ 3 cấu hình trọng số: `comfort_priority`, `balanced`, `energy_priority`. Unit tests: `tests/test_advanced_reward.py`. |
-| 3 | **Cổng An Toàn & Cấu hình Độc lập `SafetyConfig`** | **ĐÃ HOÀN TẤT** | `src/safety/safety_gateway.py` cấu hình `@dataclass(frozen=True) class SafetyConfig`. Tích hợp cơ chế Fail-Safe khi cảm biến hỏng/NaN. Unit tests: `tests/test_safety_gateway.py` (8/8 tests). |
-| 4 | **Định danh Tham số Hộp xám & Giới hạn Vật lý** | **ĐÃ HOÀN TẤT** | `src/environment/greybox_model.py` gắn nhãn trung thực `FITTED_AT_BOUNDARY_AND_CI_INCLUDES_NON_POSITIVE` cho $k_{int}$, `EMPIRICAL_PSYCHROMETRIC_APPROXIMATION` cho $h_T$, và `NOT_IDENTIFIABLE_FROM_AVAILABLE_DATA` cho tham số cửa sổ. |
-| 5 | **Đánh giá Đa hạt giống 10 Seeds (DQL vs Single Q)** | **ĐÃ HOÀN TẤT** | Pipeline `run_academic_validation.py` chạy 10 hạt giống (`42, 101, 202, 303, 404, 505, 606, 707, 808, 909`), tính Paired t-test, Wilcoxon, 95% CI, Cohen's d và lưu tại `result/final_validation/`. |
-| 6 | **Phân tích Đánh đổi Pareto & Độ nhạy Hàm thưởng** | **ĐÃ HOÀN TẤT** | Xuất đồ thị `pareto_tradeoff.png` (Năng lượng vs Vi phạm tiện nghi) và `reward_preference_sensitivity.png` đánh giá 6 bộ điều khiển trên 3 hồ sơ ưu tiên. |
-| 7 | **Giao diện Trực quan Streamlit Chuẩn Tương Phản** | **ĐÃ HOÀN TẤT** | `app/app.py` tối ưu hóa CSS inline với nền tối Dark Slate Card (`#1e293b`), chữ trắng sáng (`#f1f5f9`), huy hiệu Cyan/Vàng phát quang, bố cục 100% Full Width theo `[DIR-202611-002]`. |
-| 8 | **Báo cáo Khoa học 21 Chương Toàn diện** | **ĐÃ HOÀN TẤT** | `BAO_CAO_TONG_KET_DO_AN.md` bổ sung Chương 21 phân định rõ ràng giữa "Những điều đồ án đã chứng minh" và "Những điều đồ án chưa chứng minh". |
+| 1 | **Digital Twin Đa Thiết Bị (7 Nhóm Actuator)** | **ĐÃ HOÀN TẤT** | `src/environment/multi_device_env.py` mô phỏng 7 nhóm thiết bị: Máy lạnh, Sưởi, Quạt thông gió, Cửa sổ/van gió, Tạo ẩm, Hút ẩm, Lọc HEPA. Unit tests: `tests/test_multi_device_simulation.py` (6/6 tests). |
+| 2 | **Cân Bằng Ẩm Tâm Trắc Học Magnus & Khối Lượng Ẩm** | **ĐÃ HOÀN TẤT** | Áp dụng công thức Magnus tính áp suất hơi bão hòa $P_{sat}(T)$, bảo toàn khối lượng hơi nước $W$ (kg/kg) và suy ra %RH nhất quán vật lý. |
+| 3 | **Động Học Khí CO2 & Bụi Mịn PM2.5** | **ĐÃ HOÀN TẤT** | Mô hình hóa phát thải CO₂ theo số người (18 L/h/người), pha loãng bằng gió tươi; mô hình hóa lắng đọng PM2.5 và khử bụi qua CADR của máy lọc HEPA. |
+| 4 | **Không Gian 720 Trạng Thái x 12 Action Templates** | **ĐÃ HOÀN TẤT** | Ngăn ngừa bùng nổ tổ hợp ($3^7 = 2.187$ actions), duy trì bảng Q kích thước chuẩn $720 \times 12 = 8.640$ phần tử, kiểm thử song ánh state mã hóa/giải mã. |
+| 5 | **Hàm Thưởng Phân Rã 7 Thành Phần Có Dấu** | **ĐÃ HOÀN TẤT** | `src/reward/multi_device_reward.py` phân rã $R_{total} = R_{temp} + R_{humidity} + R_{co2} + R_{air\_quality} + R_{energy} + R_{switching} + R_{safety}$. Unit tests: `tests/test_multi_device_reward.py` (3/3 tests). |
+| 6 | **Cổng An Toàn Đa Thiết Bị & Khóa Liên Động Cơ Điện** | **ĐÃ HOÀN TẤT** | `src/safety/multi_device_safety_gateway.py` khóa liên động không chạy đồng thời Sưởi+Làm lạnh, Tạo ẩm+Hút ẩm; khống chế khẩn cấp nhiệt độ, CO₂ và khóa cửa sổ khi sương mù/mưa bão. Unit tests: `tests/test_multi_device_safety.py` (6/6 tests). |
+| 7 | **Giao Diện Step-by-Step Mới: HVAC Agent Live Simulation** | **ĐÃ HOÀN TẤT** | `app/live_simulation_gui.py` hỗ trợ chạy từng bước (Step Forward), Start/Pause/Resume, tốc độ 0.25x-5x, hiển thị 7 nhóm thiết bị, Decision Trace, Q1/Q2 thực tế, Evaluation Mode vs Online Learning Mode, tuân thủ `[ERR-202611-003]`. |
+| 8 | **Cô lập Episode & Reset Môi trường** | **ĐÃ HOÀN TẤT** | `src/environment/target_env.py` (`reset()` khôi phục `window_state=0`, `last_action=None`, `episode_energy=0`, `switching_count=0`; Bước 0 có chi phí chuyển đổi $= 0$). Unit tests: `tests/test_target_env_reset.py`. |
+| 9 | **Định danh Tham số Hộp xám & Giới hạn Vật lý** | **ĐÃ HOÀN TẤT** | `src/environment/greybox_model.py` gắn nhãn trung thực `FITTED_AT_BOUNDARY_AND_CI_INCLUDES_NON_POSITIVE` cho $k_{int}$, `EMPIRICAL_PSYCHROMETRIC_APPROXIMATION` cho $h_T$, và `NOT_IDENTIFIABLE_FROM_AVAILABLE_DATA` cho tham số cửa sổ. |
+| 10 | **Đánh giá Đa hạt giống 10 Seeds (DQL vs Single Q)** | **ĐÃ HOÀN TẤT** | Pipeline `run_academic_validation.py` chạy 10 hạt giống (`42, 101, 202, 303, 404, 505, 606, 707, 808, 909`), tính Paired t-test, Wilcoxon, 95% CI, Cohen's d và lưu tại `result/final_validation/`. |
 
 ---
 
