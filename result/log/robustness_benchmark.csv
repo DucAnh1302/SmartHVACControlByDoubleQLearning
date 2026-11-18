@@ -1,0 +1,8 @@
+Perturbation Scenario,Mean Reward,Reward Std Across Seeds,Worst-Case Reward,Comfort Violation (%),Severe Violations (%),Daily Energy (kWh),Robustness Status
+Nominal Plant,-89.36,15.08,-102.65,70.65,18.61,269.06,VULNERABLE
+High Envelope Leakage (+35% k_env),-122.48,24.44,-147.17,76.48,22.78,281.13,VULNERABLE
+Tight Insulation (-35% k_env),-57.65,12.05,-67.55,59.45,9.35,243.33,VULNERABLE
+Degraded HVAC Efficiency (-25% k_ac),-120.96,21.6,-144.23,72.22,22.5,281.85,VULNERABLE
+High Sensor Noise (0.5°C std),-91.84,15.99,-113.11,69.54,14.72,280.3,VULNERABLE
+Heatwave Bias (+2.5°C Ambient),-204.07,44.42,-248.06,81.2,30.74,358.81,VULNERABLE
+Equipment Power Drift (+25% kW),-76.52,13.37,-87.58,67.78,12.22,321.97,VULNERABLE

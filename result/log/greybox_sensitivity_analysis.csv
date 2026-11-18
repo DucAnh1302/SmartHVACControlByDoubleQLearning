@@ -1,0 +1,4 @@
+Parameter,Baseline Value,Low Value (-25%),Low Temp Output (°C),High Value (+25%),High Temp Output (°C),Sensitivity Delta (°C)
+k_env,0.0744,0.0558,26.13,0.093,26.39,0.26
+k_int,0.01,0.0075,26.255,0.0125,26.265,0.01
+k_ac,0.013,0.0097,26.33,0.0163,26.19,0.14

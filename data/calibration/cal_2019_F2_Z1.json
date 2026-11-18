@@ -1,0 +1,24 @@
+{
+  "domain_id": "2019_F2_Z1",
+  "year": 2019,
+  "floor": 2,
+  "zone": "z1",
+  "off_power_kw": 0.0,
+  "low_power_kw": 3.81,
+  "med_power_kw": 24.22,
+  "high_power_kw": 34.17,
+  "off_frequency": 0.665,
+  "total_samples": 7211,
+  "active_samples": 2416,
+  "cluster_centers": [
+    3.81,
+    24.22,
+    34.17
+  ],
+  "cluster_boundaries": [
+    14.02,
+    29.2
+  ],
+  "inertia": 24803.08,
+  "provenance": "FITTED_WITH_CAVEAT"
+}
