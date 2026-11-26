@@ -1,0 +1,12 @@
+# Smart HVAC Control by Double Q-Learning
+# Python 3.10+ / 3.12 compatible dependencies
+
+numpy>=1.24.0
+pandas>=2.0.0
+scipy>=1.10.0
+matplotlib>=3.7.0
+pytest>=7.0.0
+python-docx>=1.1.0
+python-pptx>=0.6.21
+openpyxl>=3.1.0
+pyyaml>=6.0.0

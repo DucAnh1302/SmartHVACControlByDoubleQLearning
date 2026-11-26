@@ -1,0 +1,108 @@
+# GATE CONFIGURATION FILE - LOCKED THRESHOLDS
+# Repository: Nhom2 (Smart HVAC Control by Double Q-Learning)
+# Author: ML Engineering Team
+# Security: Do not modify without explicit user authorization after gates-locked tag.
+
+version: "1.0.0"
+locked_timestamp: "2026-11-24T17:30:00+07:00"
+
+phase_1c:
+  name: "Physical Simulation & Baseline Calibration"
+  pytest_min_passed: 74
+  pytest_max_failed: 0
+  git_diff_tests_modified_count: 0
+  sizing_ratio_min: 1.2
+  sizing_ratio_max: 1.5
+  pv7_temp_mean_diff_max: 1.5
+  pv7_rh_p50_diff_max: 8.0
+  fixed_kwh_m2_day_min: 0.2
+  fixed_kwh_m2_day_max: 0.8
+  state_coverage_dims_count: 6
+  stop_mandatory: true
+
+phase_1d:
+  name: "Physical Verification & Climatology Clarification"
+  discretize_t_cutoffs: [21.0, 24.0, 26.0, 28.5]
+  discretize_rh_cutoffs: [40.0, 65.0]
+  discretize_co2_cutoffs: [800.0, 1200.0]
+  discretize_pm25_cutoff: 35.0
+  discretize_load_cutoff: 0.5
+  all_days_coverage_includes_weekends: true
+  ambient_rh_code_generated: true
+  max_calibrated_params: 3
+  limitations_documented_in_pv: true
+  load_desc_exact_string: "mang chủ yếu thông tin có người/không có người (trùng 96.8%)"
+  stop_mandatory: false
+
+phase_2:
+  name: "Data Pipeline, Temporal Leak-Free Split & Domain Ingestion"
+  train_ratio: 0.60
+  val_ratio: 0.20
+  test_ratio: 0.20
+  buffer_hours: 24
+  assert_no_temporal_overlap: true
+  norm_stats_train_only: true
+  raw_vs_processed_max_pct_diff: 1.0
+  required_docs:
+    - "docs/DATA_PIPELINE.md"
+    - "docs/DATA_ROLE.md"
+  pytest_min_passed: 74
+  stop_mandatory: false
+
+phase_3:
+  name: "RL & Baseline Benchmark Protocol & Locked Execution"
+  protocol_locked_tag_before_results: true
+  controllers_count: 6
+  min_seeds: 10
+  required_scenarios:
+    - "test-A"
+    - "test-B"
+    - "test-C"
+  required_stats:
+    - "paired_t"
+    - "wilcoxon"
+    - "cohens_d"
+    - "bootstrap_ci"
+  interpretation_branches: [1, 2, 3]
+  bias_experiment_verification: true
+  stop_mandatory: true
+
+phase_4:
+  name: "Manifest Generation, Artifacts & Scientific Charts"
+  required_figures_count: 18
+  required_csv_tables_count: 5
+  xlsx_regenerated_from_code: true
+  check_consistency_script_runs: true
+  all_figures_have_conclusive_titles: true
+  stop_mandatory: false
+
+phase_5:
+  name: "Academic Report Document (Word .docx)"
+  docx_consistency_check_passes: true
+  forbidden_phrases_count: 0
+  forbidden_old_numbers_count: 0
+  toc_present: true
+  all_figures_tables_referenced: true
+  references_verified_or_tagged: true
+  stop_mandatory: false
+
+phase_6:
+  name: "Presentation Deck (PowerPoint .pptx)"
+  slide_body_max_words: 110
+  slide_body_min_font_pt: 20.0
+  slide_caption_min_font_pt: 20.0
+  speaker_notes_word_range: [75, 160]
+  script_total_minutes_range: [12.0, 22.0]
+  check_consistency_passes: true
+  stop_mandatory: true
+
+phase_7_8:
+  name: "Full Reproduction, GUI Verification & Submission Package"
+  gui_smoke_test_passes: true
+  run_all_reproducibility_identical: true
+  check_consistency_all_pass: true
+  pytest_min_passed: 74
+  required_audit_docs:
+    - "docs/FINAL_AUDIT_REPORT.md"
+    - "docs/FINAL_CONSISTENCY_MATRIX.md"
+  stop_mandatory: true

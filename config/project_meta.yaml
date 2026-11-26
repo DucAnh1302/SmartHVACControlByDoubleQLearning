@@ -1,0 +1,37 @@
+# Project Metadata Configuration
+# Single source of truth for administrative and team details across Word, PPTX, and docs.
+
+project:
+  title: "Smart HVAC Control by Double Q-Learning"
+  title_vn: "Điều Khiển Hệ Thống HVAC Đa Thiết Bị Dựa Trên Double Q-Learning & Mô Hình Digital Twin"
+  institution: "Trường Đại học Công Thương TP. Hồ Chí Minh"
+  institution_short: "HUIT"
+  department: "Khoa Công nghệ Thông tin"
+  subject: "Học máy (Machine Learning)"
+  group_name: "Nhóm 2"
+  nature: "RESEARCH_SIMULATION_ONLY"
+  presentation_duration_minutes: 15
+  qa_duration_minutes: 5
+
+instructor:
+  title: "TS."
+  name: "Nguyễn Thanh Long"
+  status: "confirmed"
+
+team_members:
+  - name: "Nguyễn Vũ Đức Anh"
+    student_id: "2001240016"
+    role: "Trưởng nhóm"
+    contribution_pct: 25
+  - name: "Trần Thị Thanh Ngân"
+    student_id: "2001240292"
+    role: "Thành viên"
+    contribution_pct: 25
+  - name: "Võ Thanh Trường"
+    student_id: "2001240529"
+    role: "Thành viên"
+    contribution_pct: 25
+  - name: "Võ Thị Diễm My"
+    student_id: "2001240280"
+    role: "Thành viên"
+    contribution_pct: 25

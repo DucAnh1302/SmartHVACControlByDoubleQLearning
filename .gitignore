@@ -1,0 +1,20 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*\.class
+*.pyc
+
+# Caches
+.pytest_cache/
+
+# Raw CU-BEMS dataset & generated runtime outputs (auto-generated on run)
+data/raw/*.csv
+result/
+
+# Office lock / temp files & IDE
+~$*
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
